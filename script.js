@@ -357,10 +357,11 @@ document.addEventListener("DOMContentLoaded", function() {
             return;
         }
 
-        const quantity = parseInt(quantityInput.value);
-        const pricePerItem = parseFloat(selectedNft.price);
-        const totalPrice = pricePerItem * quantity;
-        const userBalance = walletDatabase[currentWalletAddress].balance;
+        // 假設這些數據已經從後端或表單獲取
+        const selectedNftCard = document.querySelector('.nft-card.selected'); // 假設選擇的NFT卡片有.selected類
+        const nftName = selectedNftCard.querySelector('h3').textContent;
+        const quantity = parseInt(quantityInput.value) || 1;
+        const totalPrice = (parseFloat(selectedNftCard.querySelector('.nft-price').textContent.split('：')[1]) * quantity).toFixed(2);
 
         // 驗證支付地址
         const paymentAddress = document.getElementById('payment-address').value;
@@ -402,7 +403,11 @@ document.addEventListener("DOMContentLoaded", function() {
         console.log(`總價: ${totalPrice} MTC`);
         console.log(`支付地址: ${paymentAddress}`);
 
+        // 顯示交易資訊到前端
         displayTransactionInfo(transactionID, nftName, quantity, totalPrice, paymentAddress);
+
+        // 更新交易記錄
+        logTransaction(transactionID, nftName, quantity, totalPrice, paymentAddress);
     });
 
     // 關閉訂單成功彈窗
