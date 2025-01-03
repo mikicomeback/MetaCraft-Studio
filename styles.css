@@ -1,0 +1,635 @@
+/* 針對不同螢幕尺寸的響應式設計 */
+@media (max-width: 768px) {
+    .about {
+        flex-direction: column; /* 小螢幕時改為垂直排列 */
+        align-items: center; /* 垂直排列並居中 */
+    }
+
+    .about-column {
+        width: 100%; /* 確保每個區塊在小螢幕上都佔滿寬度 */
+        margin-bottom: 20px;
+    }
+
+    .about-column:last-child {
+        margin-bottom: 0; /* 最後一個區塊不需要底部間距 */
+    }
+}
+
+/* 響應式設計：小螢幕裝置下彈窗大小調整 */
+@media (max-width: 768px) {
+    .purchase-popup .popup-content,
+    .confirmation-popup .popup-content {
+        width: 90%;
+        padding: 20px;
+    }
+}
+
+/* 開啟彈窗的動畫 */
+@keyframes popupFadeIn {
+    0% {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+@keyframes price-up {
+    from { transform: scale(1); }
+    to { transform: scale(1.2); }
+}
+
+@keyframes price-down {
+    from { transform: scale(1); }
+    to { transform: scale(0.8); }
+}
+
+/* General styles */
+body {
+    margin: 0;
+    font-family: 'Arial', sans-serif;
+    background-color: #121212;
+    color: #ffffff;
+}
+
+/* Navbar */
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    background-color: #1f1f1f;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+.navbar .logo {
+    display: flex;
+    align-items: center;
+    gap: 10px; /* Space between logo image and company name */
+}
+
+.navbar .logo img {
+    height: 50px; /* Adjust the height of the logo */
+    width: auto; /* Maintain aspect ratio */
+}
+
+.navbar .company-name {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #ffffff;
+    text-decoration: none;
+}
+
+.nav-links {
+    list-style: none;
+    display: flex;
+    gap: 20px;
+    align-items: center;
+}
+
+.nav-links li {
+    display: inline;
+}
+
+.nav-links a {
+    text-decoration: none;
+    color: #ffffff;
+}
+
+#wallet-balance {
+    color: #fff;
+    font-weight: bold;
+}
+
+#connect-wallet {
+    background-color: #ff5722;
+    color: #ffffff;
+    border: none;
+    padding: 8px 16px;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+#connect-wallet:hover {
+    background-color: #e64a19;
+}
+
+/* Hero Section */
+.hero {
+    text-align: center;
+    padding: 50px 20px;
+    background: linear-gradient(120deg, #212121, #424242);
+}
+
+.hero h1 {
+    font-size: 2.5rem;
+    margin-bottom: 20px;
+}
+
+.hero p {
+    font-size: 1.2rem;
+    margin-bottom: 30px;
+}
+
+.cta-button {
+    background-color: #ff5722;
+    color: #ffffff;
+    text-decoration: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+}
+
+.cta-button:hover {
+    background-color: #e64a19;
+}
+
+/* NFT Marketplace */
+.marketplace {
+    padding: 50px 20px;
+    text-align: center;
+}
+
+.marketplace h2 {
+    margin-bottom: 30px;
+}
+
+.nft-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); /* 三欄顯示 */
+    gap: 30px;
+    justify-items: center;
+}
+
+.nft-card {
+    position: relative;
+    background-color: #1f1f1f;
+    padding: 20px;
+    border-radius: 8px;
+    text-align: center;
+    width: 100%;
+    max-width: 300px; /* 保持NFT卡片最大寬度 */
+    transition: transform 0.3s ease-in-out; /* 添加卡片動畫效果 */
+}
+
+.nft-card:hover {
+    transform: scale(1.05); /* 當懸停時，放大卡片 */
+}
+
+.nft-card img {
+    width: 100%;
+    height: 300px; /* 增大NFT圖片大小 */
+    object-fit: cover; /* 使圖片充滿容器並保持比例 */
+    border-radius: 8px;
+    cursor: pointer; /* 讓圖片變成可點擊 */
+}
+
+.nft-card h3 {
+    margin-top: 15px;
+    font-size: 1.2rem;
+    color: #ff5722;
+    font-weight: bold;
+}
+
+.nft-card span {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #c8c8c8;
+    margin: 10px 0;
+}
+
+.nft-card p {
+    font-size: 1rem;
+    margin: 10px 0;
+}
+
+.nft-card span a{
+    text-decoration: none;
+    color: #c8c8c8;
+
+}
+
+.nft-card .buy-button {
+    background-color: #ff5722;
+    color: #ffffff;
+    border: none;
+    padding: 8px 16px;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+.nft-card .buy-button:hover {
+    background-color: #e64a19;
+}
+
+/* 增加NFT介紹區域的滑入滑出效果 */
+.nft-description {
+    position: absolute;
+    bottom: -0; /* 初始位置在底部外 */
+    left: 0;
+    right: 0;
+    background-color: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 15px;
+    font-size: 14px;
+    line-height: 1.5;
+    border-top: 2px solid #fff;
+    display: none;
+    border-radius: 8px;
+    transition: bottom 0.5s ease-in-out; /* 增加滑動效果 */
+}
+
+.nft-card.active .nft-description {
+    display: block;
+    bottom: 0; /* 滑動到視圖內部 */
+}
+
+/* About Section */
+.about {
+    display: flex; /* 使用 flexbox */
+    justify-content: space-between; /* 平均分配空間 */
+    padding: 50px 20px;
+    background-color: #212121;
+    text-align: center;
+    gap: 20px; /* 增加列之間的間距 */
+}
+
+.about-column {
+    flex: 1; /* 每一個區塊平分空間 */
+    padding: 20px;
+    color: white;
+    border-radius: 8px; /* 圓角邊框 */
+}
+
+.about-column h2 {
+    margin-bottom: 15px;
+    font-size: 1.5rem;
+}
+
+.about-column p {
+    font-size: 1rem;
+    line-height: 1.6;
+}
+
+/* 購買流程彈窗 */
+.purchase-popup {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.8);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    font-family: 'Arial', sans-serif;
+}
+
+.purchase-popup .popup-content {
+    background-color: #2c2c2c;
+    padding: 30px;
+    border-radius: 10px;
+    width: 400px;
+    text-align: center;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+    animation: popupFadeIn 0.3s ease-out;
+}
+
+.purchase-popup h3 {
+    font-size: 1.5rem;
+    color: #ff5722;
+    margin-bottom: 20px;
+    font-weight: 600;
+}
+
+.purchase-popup p {
+    font-size: 1rem;
+    color: #f5f5f5;
+    margin-bottom: 20px;
+}
+
+.purchase-popup label {
+    font-size: 1rem;
+    color: #e0e0e0;
+    margin-bottom: 5px;
+    text-align: left;
+    display: block;
+}
+
+.purchase-popup input, 
+.purchase-popup select {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 20px;
+    background-color: #333;
+    color: #fff;
+    border: 1px solid #444;
+    border-radius: 6px;
+    font-size: 1rem;
+    box-sizing: border-box; /* 保證邊框和內邊距計算在內 */
+}
+
+.purchase-popup input::placeholder {
+    color: #888;
+}
+
+.purchase-popup button {
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-radius: 6px;
+    background-color: #ff5722;
+    color: white;
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin-top: 10px;
+}
+
+.purchase-popup button:hover {
+    background-color: #e64a19;
+}
+
+/* 取消按鈕 */
+.purchase-popup .cancel-button {
+    background-color: #888;
+}
+
+.purchase-popup .cancel-button:hover {
+    background-color: #666;
+}
+
+/* 訂單確認成功彈窗 */
+.confirmation-popup {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.8);
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    font-family: 'Arial', sans-serif;
+}
+
+.confirmation-popup .popup-content {
+    background-color: #2c2c2c;
+    padding: 30px;
+    border-radius: 10px;
+    width: 400px;
+    text-align: center;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+    animation: popupFadeIn 0.3s ease-out;
+}
+
+#nft-name{
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+.confirmation-popup h3 {
+    font-size: 1.5rem;
+    color: #8bc34a;
+    margin-bottom: 15px;
+    font-weight: 600;
+}
+
+.confirmation-popup p {
+    font-size: 1rem;
+    color: #f5f5f5;
+    margin-bottom: 20px;
+}
+
+.confirmation-popup button {
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-radius: 6px;
+    background-color: #8bc34a;
+    color: white;
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.confirmation-popup button:hover {
+    background-color: #7cb342;
+}
+
+#nft-price {
+    color: #ff5722;
+    font-weight: bold;
+}
+
+#total-price {
+    color: #bcafaf;
+    font-weight: bold;
+}
+
+/* Artists Section */
+.artists {
+    padding: 50px 20px;
+    background-color: #2c2c2c;
+    text-align: center;
+}
+
+.artists h2 {
+    margin-bottom: 30px;
+    color: #ffffff;
+}
+
+.artists-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); /* 三欄顯示 */
+    gap: 30px;
+}
+
+.artist-card {
+    background-color: #1f1f1f;
+    padding: 20px;
+    border-radius: 8px;
+    text-align: center;
+}
+
+.artist-card img {
+    width: 100%;
+    height: 200px; /* 固定高度 */
+    object-fit: cover;
+    border-radius: 8px;
+}
+
+.artist-card h3 {
+    margin-top: 15px;
+    font-size: 1.2rem;
+    color: #ffffff;
+}
+
+.artist-card p {
+    color: #e0e0e0;
+    font-size: 1rem;
+}
+
+.artist-card p a{
+    color: #ff5722;
+    font-size: 1rem;
+    text-decoration: none;
+
+}
+
+/* Image Modal Styles */
+.image-modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.8);
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+#modal-image {
+    max-width: 90%;
+    max-height: 90%;
+    margin: auto;
+    display: block;
+}
+
+.close-btn {
+    position: absolute;
+    top: 15px;
+    right: 35px;
+    color: white;
+    font-size: 30px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.favorite-button {
+    background-color: #f8f9fa;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    color: #333;
+    cursor: pointer;
+    padding: 5px 10px;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.favorite-button:hover {
+    background-color: #ff6363;
+    color: #fff;
+}
+
+#favorites-section {
+    margin-top: 30px;
+    padding: 20px;
+    background-color: #212121;
+    border-radius: 10px;
+}
+
+#favorites-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.favorite-card {
+    background-color: #121212;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    padding: 10px;
+    width: auto;
+    text-align: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.price-up {
+    color: #28a745;
+    font-weight: bold;
+    animation: price-up 1.5s;
+}
+
+.price-down {
+    color: #dc3545;
+    font-weight: bold;
+    animation: price-down 1.5s;
+}
+
+#nftPriceChart{
+    max-width: auto;
+    max-height: 400px;
+}
+
+/* Footer */
+.footer {
+    background-color: #333;
+    color: white;
+    padding: 20px 0;
+    text-align: center;
+    margin-top: 50px;
+    font-family: Arial, sans-serif;
+}
+
+/* Footer Content */
+.footer-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding-bottom: 20px;
+}
+
+.footer h3 {
+    font-size: 24px;
+    margin-bottom: 10px;
+}
+
+.footer p {
+    font-size: 14px;
+    margin-bottom: 20px;
+}
+
+/* Footer Section */
+.footer-info {
+    text-align: center;
+    padding: 20px;
+    background-color: #212121;
+    color: white;
+}
+
+/* Social Icons */
+.social-icons {
+    margin-bottom: 10px; /* 社交圖標和版權信息之間的間距 */
+}
+
+.social-icons a {
+    margin: 0 15px; /* 設置每個圖標的間距 */
+    color: white; /* 圖標顏色 */
+    font-size: 30px; /* 設定圖標大小 */
+    text-decoration: none; /* 去除下劃線 */
+    transition: color 0.3s ease; /* 加入過渡效果 */
+}
+
+.social-icons a:hover {
+    color: #1DA1F2; /* 當用戶懸停時變更顏色（此處為 Twitter 藍色） */
+}
+
+/* 調整圖標顏色 */
+.social-icons a:nth-child(1):hover { color: #E1306C; } /* Instagram */
+.social-icons a:nth-child(2):hover { color: #1DA1F2; } /* Twitter */
+.social-icons a:nth-child(3):hover { color: #7289DA; } /* Discord */
+
+
+/* Make sure the chart canvas is responsive */
+footer canvas {
+    width: 100%;
+    height: auto;
+    max-width: 1000px; /* 控制圖表寬度的最大值 */
+    margin: 0 auto;
+}

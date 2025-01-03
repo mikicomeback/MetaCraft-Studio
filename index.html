@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MetaCraft Studio</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+</head>
+<body>
+  <!-- Navbar -->
+  <nav class="navbar">
+    <div class="logo">
+        <img src="./img/company logo.jpg" alt="MetaCraft Logo" />
+        <a href="./index.html" class="company-name">MetaCraft Studio</a>
+    </div>
+    <ul class="nav-links">
+        <li><a href="#marketplace">NFT市集</a></li>
+        
+        <li><a href="#artists">藝術家</a></li>
+        <li><a href="#about">關於我們</a></li>
+        <li>
+            <button id="connect-wallet">連接錢包</button>
+            <span id="wallet-balance" style="margin-left: 10px;"></span>
+        </li>
+    </ul>
+  </nav>
+
+  <!-- Hero Section -->
+  <header class="hero" id="hero">
+    <h1>文化藝術 × NFT 創造未來</h1>
+    <p>探索並收藏獨特的文化創意NFT，讓藝術永續。</p>
+    <a href="#marketplace" class="cta-button">探索市集</a>
+  </header>
+
+  <section id="favorites-section">
+    <h2>我的收藏</h2>
+    <div id="favorites-list" class="favorites-list">
+        <p>尚無收藏，快去添加吧！</p>
+    </div>
+  </section>
+
+  <!-- NFT Marketplace -->
+  <section id="marketplace" class="marketplace">
+      <h2>精選NFT</h2>
+      <div class="nft-grid">
+        <!-- 第一行 -->
+        <div class="nft-card">
+          <img src="./img/nft1.jpg" alt="NFT 1" id="nft1" class="nft-image" data-image="./img/nft1.jpg">
+          <h3>龍鳳雲韻</h3>
+          <span><a href="#artists">藝術家：李天宇</a></span>
+          <p class="nft-price">價格：3 MTC</p>
+          <button class="buy-button">購買</button>
+          <button class="favorite-button">❤️ 收藏</button>
+          <div class="nft-description">
+            <p>這幅作品描繪了一條栩栩如生的龍與雲霧交織，背景為雄偉的古代山脈。龍身的鱗片精緻細膩，色彩鮮豔，象徵著力量與神秘。</p>
+          </div>
+        </div>
+        <div class="nft-card">
+          <img src="./img/nft2.jpg" alt="NFT 2" id="nft2" class="nft-image" data-image="./img/nft2.jpg">
+          <h3>數位鳳凰重生</h3>
+          <span><a href="#artists">藝術家：陳詩婷</a></span>
+          <p class="nft-price">價格：2.5 MTC</p>
+          <button class="buy-button">購買</button>
+          <button class="favorite-button">❤️ 收藏</button>
+          <div class="nft-description">
+            <p>這幅數位藝術作品以抽象形式呈現鳳凰從灰燼中重生的過程，鳥身由發光的幾何形狀與動態線條構成，散發出一種流動感。</p>
+          </div>
+        </div>
+        <div class="nft-card">
+          <img src="./img/nft3.jpg" alt="NFT 3" id="nft3" class="nft-image" data-image="./img/nft3.jpg">
+          <h3>未來綠洲</h3>
+          <span><a href="#artists">藝術家：蔡明瑄</a></span>
+          <p class="nft-price">價格：2 MTC</p>
+          <button class="buy-button">購買</button>
+          <button class="favorite-button">❤️ 收藏</button>
+          <div class="nft-description">
+            <p>這幅當代藝術作品呈現了一個超現實的未來城市景觀，其中自然與科技和諧共生。金屬質感的摩天大樓與葱鬱的綠意交織，未來的飛行車在空中穿梭。</p>
+          </div>
+        </div>
+        <!-- 第二行 -->
+        <div class="nft-card">
+          <img src="./img/nft4.jpg" alt="NFT 4" id="nft4" class="nft-image" data-image="./img/nft4.jpg">
+          <h3>星空之下</h3>
+          <span><a href="#artists">藝術家：蔡思方</a></span>
+          <p class="nft-price">價格：1.8 MTC</p>
+          <button class="buy-button">購買</button>
+          <button class="favorite-button">❤️ 收藏</button>
+          <div class="nft-description">
+              <p>這幅未來感十足的數位藝術作品呈現了自然與高科技的融合。一棵有機樹從金屬結構中生長，樹葉呈現全息光輝，閃爍於霓虹燈照亮的天空中。</p>
+          </div>
+        </div>
+        <div class="nft-card">
+          <img src="./img/nft5.jpg" alt="NFT 5" id="nft5" class="nft-image" data-image="./img/nft5.jpg">
+          <h3>共生未來</h3>
+          <span><a href="#artists">藝術家：李亭薇</a></span>
+          <p class="nft-price">價格：3 MTC</p>
+          <button class="buy-button">購買</button>
+          <button class="favorite-button">❤️ 收藏</button>
+          <div class="nft-description">
+            <p>這幅夢幻般的數位畫作展現了一個孤獨的身影，站在草地上仰望著星空，柔和的星光照亮了這片寧靜的天地，隱喻情感的平衡與內心的寧靜。</p>
+          </div>
+        </div>
+        <div class="nft-card">
+          <img src="./img/nft6.jpg" alt="NFT 6" id="nft6" class="nft-image" data-image="./img/nft6.jpg">
+          <h3>變幻城市</h3>
+          <span><a href="#artists">藝術家：Ethan Hawke</a></span>
+          <p class="nft-price">價格：2.8 MTC</p>
+          <button class="buy-button">購買</button>
+          <button class="favorite-button">❤️ 收藏</button>
+          <div class="nft-description">
+            <p>這幅沉浸式的數位藝術作品描繪了一座融合真實與虛幻元素的城市景觀。街道上排列著巨大的浮動雕塑，建築物似乎在變形，仿佛它們有生命。</p>
+          </div>
+        </div>
+        <!-- 第三行 -->
+        <div class="nft-card">
+          <img src="./img/nft7.jpg" alt="NFT 7" id="nft7" class="nft-image" data-image="./img/nft7.jpg">
+          <h3>幻境城市</h3>
+          <span><a href="#artists">藝術家：Liam Wilder</a></span>
+          <p class="nft-price">價格：2 MTC</p>
+          <button class="buy-button">購買</button>
+          <button class="favorite-button">❤️ 收藏</button>
+          <div class="nft-description">
+            <p>這幅數位藝術融合現實與超現實元素，展示了一個變形的城市景觀，探索人類知覺與增強現實的交匯。</p>
+          </div>
+        </div>
+        <div class="nft-card">
+          <img src="./img/nft8.jpg" alt="NFT 8" id="nft8" class="nft-image" data-image="./img/nft8.jpg">
+          <h3>自由之光</h3>
+          <span><a href="#artists">藝術家：Alexander Grey</a></span>
+          <p class="nft-price">價格：2.2 MTC</p>
+          <button class="buy-button">購買</button>
+          <button class="favorite-button">❤️ 收藏</button>
+          <div class="nft-description">
+            <p>這幅象徵性的數位藝術作品表現了自我發現與蛻變的過程，畫面中一位人類形象從鎖鏈中掙脫出來，四周是一場爆發的光彩與顏色。</p>
+          </div>
+        </div>
+        <div class="nft-card">
+          <img src="./img/nft9.jpg" alt="NFT 9" id="nft9" class="nft-image" data-image="./img/nft9.jpg">
+          <h3>混沌之心</h3>
+          <span><a href="#artists">藝術家：Vivian Starr</a></span>
+          <p class="nft-price">價格：1.5 MTC</p>
+          <button class="buy-button">購買</button>
+          <button class="favorite-button">❤️ 收藏</button>
+          <div class="nft-description">
+            <p>這幅數位抽象藝術呈現了藝術家內心的激烈波動與混亂，色彩交錯且筆觸狂亂，象徵著自我探索中的內心衝突與轉變。</p>
+          </div>
+        </div>
+      </div>
+  </section>
+ 
+  <!-- Artists Section -->
+  <section id="artists" class="artists">
+    <h2>我們的藝術家</h2>
+    <div class="artists-grid">
+        <div class="artist-card">
+            <img src="./img/artist1.jpg" alt="Artist 1" class="artist-image" data-image="./img/artist1.jpg">
+            <h3>李天宇</h3>
+            <p>專長：數位藝術、抽象表現主義</p>
+            <p>代表作：<a href="#nft1" class="artwork-link">龍鳳雲韻</a></p>
+        </div>
+        <div class="artist-card">
+            <img src="./img/artist2.jpg" alt="Artist 2" class="artist-image" data-image="./img/artist2.jpg">
+            <h3>陳詩婷</h3>
+            <p>專長：數位插畫、動態藝術</p>
+            <p>代表作：<a href="#nft2" class="artwork-link">數位鳳凰重生</a></p>
+        </div>
+        <div class="artist-card">
+            <img src="./img/artist3.jpg" alt="Artist 3" class="artist-image" data-image="./img/artist3.jpg">
+            <h3>蔡明瑄</h3>
+            <p>專長：當代藝術、未來城市設計</p>
+            <p>代表作：<a href="#nft3" class="artwork-link">未來綠洲</a></p>
+        </div>
+        <div class="artist-card">
+            <img src="./img/artist4.jpg" alt="Artist 4" class="artist-image" data-image="./img/artist4.jpg">
+            <h3>蔡思方</h3>
+            <p>專長：未來感數位藝術、自然科技結合</p>
+            <p>代表作：<a href="#nft4" class="artwork-link">星空之下</a></p>
+        </div>
+        <div class="artist-card">
+            <img src="./img/artist5.jpg" alt="Artist 5" class="artist-image" data-image="./img/artist5.jpg">
+            <h3>李亭薇</h3>
+            <p>專長：夢幻畫作、情感表現藝術</p>
+            <p>代表作：<a href="#nft5" class="artwork-link">共生未來</a></p>
+        </div>
+        <div class="artist-card">
+            <img src="./img/artist6.jpg" alt="Artist 6" class="artist-image" data-image="./img/artist6.jpg">
+            <h3>Ethan Hawke</h3>
+            <p>專長：沉浸式數位藝術、城市景觀創作</p>
+            <p>代表作：<a href="#nft6" class="artwork-link">變幻城市</a></p>
+        </div>
+        <div class="artist-card">
+            <img src="./img/artist7.jpg" alt="Artist 7" class="artist-image" data-image="./img/artist7.jpg">
+            <h3>Liam Wilder</h3>
+            <p>專長：增強現實藝術、超現實表現</p>
+            <p>代表作：<a href="#nft7" class="artwork-link">幻境城市</a></p>
+        </div>
+        <div class="artist-card">
+            <img src="./img/artist8.jpg" alt="Artist 8" class="artist-image" data-image="./img/artist8.jpg">
+            <h3>Alexander Grey</h3>
+            <p>專長：象徵性數位藝術、自我發現表現</p>
+            <p>代表作：<a href="#nft8" class="artwork-link">自由之光</a></p>
+        </div>
+        <div class="artist-card">
+            <img src="./img/artist9.jpg" alt="Artist 9" class="artist-image" data-image="./img/artist9.jpg">
+            <h3>Vivian Starr</h3>
+            <p>專長：數位抽象藝術、內心探索</p>
+            <p>代表作：<a href="#nft9" class="artwork-link">混沌之心</a></p>
+        </div>
+    </div>
+</section>
+
+  <!-- Image Modal -->
+  <div id="image-modal" class="image-modal">
+    <span id="close-modal" class="close-btn">&times;</span>
+    <img id="modal-image" src="" alt="Enlarged Image">
+  </div>
+
+  <!-- Purchase Popup -->
+  <div id="purchase-popup" class="purchase-popup">
+    <div class="popup-content">
+      <p id="nft-name">選擇 NFT 名稱</p>
+      <p id="nft-price" >價格：0 MTC</p>
+      <p id="total-price">總價：0 MTC</p>
+      <p id="nft-stock">庫存：0</p>
+      <label for="quantity">數量：</label>
+      <input type="number" id="quantity" min="1" value="1">
+      <label for="payment-address">支付地址：</label>
+      <input type="text" id="payment-address" placeholder="輸入您的支付地址">
+      <button id="confirm-purchase">確認購買</button>
+      <button class="cancel-button" id="cancel-purchase">取消</button>
+    </div>
+  </div>
+
+  <!-- Confirmation Popup -->
+  <div id="confirmation-popup" class="confirmation-popup">
+    <div class="popup-content">
+      <h3>訂單確認</h3>
+      <p>您的訂單已成功提交！</p>
+      <button id="close-confirmation">關閉</button>
+    </div>
+  </div>
+
+  <!-- About Section -->
+  <section id="about" class="about">
+    <div class="about-column left">
+      <h2>經營理念</h2>
+      <p>文化創意無界限，藝術可擁抱未來。</p>
+    </div>
+    <div class="about-column center">
+      <h2>願景</h2>
+      <p>成為全球最具影響力的文化創意NFT交易平台。</p>
+    </div>
+    <div class="about-column right">
+      <h2>關於我們</h2>
+      <p>文化鏈致力於將傳統文化與數位藝術結合，推動文化藝術進入Web3時代。</p>
+    </div>
+  </section>
+
+  <!-- Footer Section with NFT Price Chart -->
+  <footer id="footer" class="footer">
+    <div class="footer-content">
+      <h3>NFT 即時價格圖表</h3>
+      <p>隨時查看不同NFT的價格波動，了解市場趨勢。</p>
+      <canvas id="nftPriceChart" style="max-width: 100%; height: 300px;"></canvas>
+    </div>
+    <div class="footer-info">
+      <div class="social-icons">
+        <a href="https://www.instagram.com" target="_blank" aria-label="Instagram">
+          <i class="fab fa-instagram"></i>
+        </a>
+        <a href="https://twitter.com" target="_blank" aria-label="Twitter">
+          <i class="fab fa-twitter"></i>
+        </a>
+        <a href="https://discord.com" target="_blank" aria-label="Discord">
+          <i class="fab fa-discord"></i>
+        </a>
+      </div>
+      <p>&copy; 2025 MetaCraft Studio | 所有權利保留</p>
+    </div>    
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
