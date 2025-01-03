@@ -24,6 +24,52 @@
     }
 }
 
+/* 為更大螢幕提供優化 */
+@media (min-width: 1024px) {
+    .nft-grid {
+        grid-template-columns: repeat(4, 1fr); /* 四欄佈局 */
+        gap: 40px;
+    }
+
+    .about-column {
+        padding: 30px;
+        font-size: 1.1rem; /* 增大字體大小 */
+    }
+
+    .purchase-popup .popup-content {
+        width: 500px; /* 增大彈窗寬度 */
+    }
+}
+
+/* 特別優化手機用戶體驗 */
+@media (max-width: 576px) {
+    .navbar {
+        flex-direction: column; /* 導航列垂直排列 */
+        gap: 15px;
+    }
+
+    .navbar .company-name {
+        font-size: 1.2rem; /* 減小公司名稱字體 */
+    }
+
+    .cta-button {
+        font-size: 1rem;
+        padding: 8px 15px;
+    }
+
+    .about {
+        flex-direction: column;
+    }
+
+    .about-column {
+        margin-bottom: 15px;
+    }
+
+    .artist-card img {
+        height: 150px; /* 減小圖片高度 */
+    }
+}
+
 /* 開啟彈窗的動畫 */
 @keyframes popupFadeIn {
     0% {
