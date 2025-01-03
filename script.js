@@ -9,6 +9,11 @@ document.addEventListener("DOMContentLoaded", function() {
     const quantityInput = document.getElementById('quantity');
     const totalPriceElement = document.getElementById('total-price');
     const copyAddressButton = document.createElement('button');
+    const transactionHistory = []; // 用於存儲交易記錄
+    let selectedNft = null;
+    const favoriteButtons = document.querySelectorAll('.favorite-button');
+    const favoritesList = document.getElementById('favorites-list');
+    const favorites = new Set(); // 使用 Set 避免重複收藏
     const nftInventory = {
         '龍鳳雲韻': 10,
         '數位鳳凰重生': 5,
@@ -20,11 +25,57 @@ document.addEventListener("DOMContentLoaded", function() {
         "自由之光": 12,
         "混沌之心": 3
     };
-    let selectedNft = null;
-    const favoriteButtons = document.querySelectorAll('.favorite-button');
-    const favoritesList = document.getElementById('favorites-list');
-    
-    const favorites = new Set(); // 使用 Set 避免重複收藏
+
+    const sortFavoritesButton = document.createElement('button');
+    sortFavoritesButton.textContent = '排序收藏';
+    sortFavoritesButton.addEventListener('click', function () {
+        const sortedFavorites = Array.from(favorites).sort(); // 按名稱排序
+        favorites.clear();
+        sortedFavorites.forEach(fav => favorites.add(fav));
+        updateFavoritesList();
+    });
+    document.getElementById('favorites-section').appendChild(sortFavoritesButton);
+
+    const filterForm = document.createElement('form');
+    filterForm.innerHTML = `
+        <label>價格範圍:
+            <input type="number" id="min-price" placeholder="最低價格">
+            <input type="number" id="max-price" placeholder="最高價格">
+        </label>
+        <button type="button" id="apply-filter">篩選</button>
+    `;
+
+    document.getElementById('filter-section').appendChild(filterForm);
+
+    document.getElementById('apply-filter').addEventListener('click', function () {
+        const minPrice = parseFloat(document.getElementById('min-price').value) || 0;
+        const maxPrice = parseFloat(document.getElementById('max-price').value) || Infinity;
+
+        document.querySelectorAll('.nft-card').forEach(card => {
+            const price = parseFloat(card.querySelector('.nft-price').textContent.split('：')[1]);
+            if (price >= minPrice && price <= maxPrice) {
+                card.style.display = 'block';
+            } else {
+                card.style.display = 'none';
+            }
+        });
+    });
+
+    // 添加購買成功的通知
+    function showNotification(message) {
+        const notification = document.createElement('div');
+        notification.className = 'notification';
+        notification.textContent = message;
+        document.body.appendChild(notification);
+
+        setTimeout(() => {
+            notification.style.opacity = '0';
+            setTimeout(() => notification.remove(), 500);
+        }, 3000);
+    }
+
+    // 在購買成功後調用
+    showNotification("購買成功！交易已完成。");
     
     favoriteButtons.forEach(button => {
         button.addEventListener('click', function () {
@@ -55,7 +106,44 @@ document.addEventListener("DOMContentLoaded", function() {
             updateFavoritesList();
         });
     });
+
+    function logTransaction(transactionID, nftName, quantity, totalPrice, paymentAddress) {
+        transactionHistory.push({
+            id: transactionID,
+            name: nftName,
+            quantity,
+            price: totalPrice,
+            address: paymentAddress,
+            date: new Date().toLocaleString(),
+        });
+        updateTransactionHistoryUI();
+    }
     
+    // 更新交易記錄到UI
+    function updateTransactionHistoryUI() {
+        const historyContainer = document.getElementById('transaction-history');
+        historyContainer.innerHTML = ''; // 清空現有內容
+
+        if (transactionHistory.length === 0) {
+            historyContainer.innerHTML = '<p>目前尚無交易記錄。</p>';
+            return;
+        }
+
+        transactionHistory.forEach(transaction => {
+            const historyItem = document.createElement('div');
+            historyItem.className = 'history-item';
+            historyItem.innerHTML = `
+                <p>交易ID: ${transaction.id}</p>
+                <p>名稱: ${transaction.name}</p>
+                <p>數量: ${transaction.quantity}</p>
+                <p>總價: ${transaction.price} MTC</p>
+                <p>支付地址: ${transaction.address}</p>
+                <p>日期: ${transaction.date}</p>
+                <hr>
+            `;
+            historyContainer.appendChild(historyItem);
+        });
+    }
     // 更新收藏區顯示
     function updateFavoritesList() {
         favoritesList.innerHTML = ''; // 清空收藏區域
@@ -289,6 +377,8 @@ document.addEventListener("DOMContentLoaded", function() {
         console.log(`數量: ${quantity}`);
         console.log(`總價: ${totalPrice} MTC`);
         console.log(`支付地址: ${paymentAddress}`);
+
+        logTransaction(transactionID, selectedNft.name, quantity, totalPrice, paymentAddress);
     });
 
     // 關閉訂單成功彈窗
