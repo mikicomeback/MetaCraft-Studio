@@ -633,3 +633,24 @@ footer canvas {
     max-width: 1000px; /* 控制圖表寬度的最大值 */
     margin: 0 auto;
 }
+
+#transaction-info {
+    margin-top: 20px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+}
+
+.transaction-item {
+    padding: 10px;
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    margin-bottom: 10px;
+}
+
+.transaction-item p {
+    margin: 5px 0;
+    font-size: 14px;
+}

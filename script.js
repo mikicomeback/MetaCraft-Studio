@@ -61,6 +61,30 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     });
 
+    function displayTransactionInfo(transactionID, nftName, quantity, totalPrice, paymentAddress) {
+        const transactionDetails = document.getElementById('transaction-details');
+        
+        // 清空之前的內容（如果只想顯示最新一筆交易）
+        transactionDetails.innerHTML = '';
+    
+        // 動態插入交易資訊
+        const infoHTML = `
+            <div class="transaction-item">
+                <p><strong>交易ID:</strong> ${transactionID}</p>
+                <p><strong>購買NFT:</strong> ${nftName}</p>
+                <p><strong>數量:</strong> ${quantity}</p>
+                <p><strong>總價:</strong> ${totalPrice} MTC</p>
+                <p><strong>支付地址:</strong> ${paymentAddress}</p>
+            </div>
+            <hr>
+        `;
+        transactionDetails.innerHTML = infoHTML;
+    
+        // 增加一些動態效果（選擇性）
+        transactionDetails.style.transition = 'opacity 0.5s';
+        transactionDetails.style.opacity = 1;
+    }
+
     // 添加購買成功的通知
     function showNotification(message) {
         const notification = document.createElement('div');
@@ -378,7 +402,7 @@ document.addEventListener("DOMContentLoaded", function() {
         console.log(`總價: ${totalPrice} MTC`);
         console.log(`支付地址: ${paymentAddress}`);
 
-        logTransaction(transactionID, selectedNft.name, quantity, totalPrice, paymentAddress);
+        displayTransactionInfo(transactionID, nftName, quantity, totalPrice, paymentAddress);
     });
 
     // 關閉訂單成功彈窗
