@@ -110,7 +110,8 @@ document.addEventListener("DOMContentLoaded", function() {
     quantityInput.addEventListener('input', function () {
         const quantity = Math.min(parseInt(quantityInput.value) || 1, nftInventory[selectedNft.name]);
         const pricePerItem = parseFloat(selectedNft.price);
-        const totalPrice = (pricePerItem * quantity).toFixed(2);
+        // 使用數學方法確保四捨五入至兩位小數
+        const totalPrice = (Math.round(pricePerItem * quantity * 100) / 100).toFixed(2);
         quantityInput.value = quantity; // 限制數量
         totalPriceElement.textContent = `總價：${totalPrice} MTC`;
     });
@@ -137,28 +138,29 @@ document.addEventListener("DOMContentLoaded", function() {
     });
 
     // 確認購買
+// 確認購買按鈕事件
 confirmPurchaseButton.addEventListener('click', function () {
-    // 如果尚未連接錢包，則自動連接錢包
     if (!walletConnected || !currentWalletAddress) {
-        const walletAddresses = Object.keys(walletDatabase);
-        currentWalletAddress = walletAddresses[Math.floor(Math.random() * walletAddresses.length)];
-        walletConnected = true;
+        // 顯示 loading 標籤
+        const loadingMessage = document.createElement('span');
+        loadingMessage.textContent = "正在連接錢包，請稍候...";
+        loadingMessage.style.color = 'blue';
+        document.querySelector('.popup-content').appendChild(loadingMessage);
 
-        connectWalletButton.textContent = "已連接錢包";
-        const balance = walletDatabase[currentWalletAddress].balance;
-        walletBalanceSpan.textContent = `餘額：${balance} MTC`;
+        setTimeout(() => {
+            // 自動選擇一個錢包地址並設置連接狀態
+            const walletAddresses = Object.keys(walletDatabase);
+            currentWalletAddress = walletAddresses[Math.floor(Math.random() * walletAddresses.length)];
+            walletConnected = true;
 
-        // 複製支付地址
-        const paymentAddress = document.getElementById('payment-address');
-        paymentAddress.value = "0x742d35Cc6634C0532925a3b844Bc454e4438f44e"; // 假設支付地址
-        navigator.clipboard.writeText(paymentAddress.value); // 複製支付地址
-        // 可以在頁面顯示提示 (不使用 alert)
-        const copiedMessage = document.createElement('span');
-        copiedMessage.textContent = "支付地址已自動複製！";
-        copiedMessage.style.color = 'green';
-        document.querySelector('.popup-content').appendChild(copiedMessage);
+            connectWalletButton.textContent = "已連接錢包";
 
-        setTimeout(() => copiedMessage.remove(), 2000); // 顯示2秒後移除訊息
+            const balance = walletDatabase[currentWalletAddress].balance;
+            walletBalanceSpan.textContent = `餘額：${balance} MTC`;
+
+            // 隱藏 loading 標籤
+            loadingMessage.remove();
+        }, 1500);
     }
 
     const nftName = selectedNft.name;
@@ -172,8 +174,7 @@ confirmPurchaseButton.addEventListener('click', function () {
         errorMessage.textContent = "請輸入有效的支付地址！";
         errorMessage.style.color = 'red';
         document.querySelector('.popup-content').appendChild(errorMessage);
-
-        setTimeout(() => errorMessage.remove(), 2000); // 顯示2秒後移除錯誤訊息
+        setTimeout(() => errorMessage.remove(), 2000);
         return;
     }
 
@@ -184,8 +185,7 @@ confirmPurchaseButton.addEventListener('click', function () {
         errorMessage.textContent = "錢包餘額不足，無法完成購買！";
         errorMessage.style.color = 'red';
         document.querySelector('.popup-content').appendChild(errorMessage);
-
-        setTimeout(() => errorMessage.remove(), 2000); // 顯示2秒後移除錯誤訊息
+        setTimeout(() => errorMessage.remove(), 2000);
         return;
     }
 
@@ -195,33 +195,34 @@ confirmPurchaseButton.addEventListener('click', function () {
         errorMessage.textContent = "購買數量超過庫存！";
         errorMessage.style.color = 'red';
         document.querySelector('.popup-content').appendChild(errorMessage);
-
-        setTimeout(() => errorMessage.remove(), 2000); // 顯示2秒後移除錯誤訊息
+        setTimeout(() => errorMessage.remove(), 2000);
         return;
     }
 
-    // 更新錢包餘額和NFT庫存
-    walletDatabase[currentWalletAddress].balance -= totalPrice;
+    // 扣除餘額和庫存
+    walletDatabase[currentWalletAddress].balance = (userBalance - totalPrice).toFixed(2);
     nftInventory[nftName] -= quantity;
 
+    // 更新餘額顯示
     walletBalanceSpan.textContent = `餘額：${walletDatabase[currentWalletAddress].balance} MTC`;
 
     // 生成訂單編號
     const transactionID = Math.random().toString(36).substr(2, 9).toUpperCase();
 
-    // 顯示訂單編號在確認彈窗
+    // 顯示訂單編號
     const orderIdElement = document.getElementById('order-id');
     orderIdElement.textContent = `訂單編號: ${transactionID}`;
 
     purchasePopup.style.display = 'none';
     confirmationPopup.style.display = 'flex';
 
-    // 顯示交易資訊
+    // 顯示交易信息
     displayTransactionInfo(transactionID, nftName, quantity, totalPrice, paymentAddressValue);
 
     // 更新交易記錄
     logTransaction(transactionID, nftName, quantity, totalPrice, paymentAddressValue);
 });
+
 
     // 關閉訂單成功彈窗
     closeConfirmationButton.addEventListener('click', function() {
@@ -283,7 +284,7 @@ confirmPurchaseButton.addEventListener('click', function () {
     }
     
     // 收藏功能
-favoriteButtons.forEach(button => {
+    favoriteButtons.forEach(button => {
         button.addEventListener('click', function () {
             const nftCard = this.closest('.nft-card');
             const nftName = nftCard.querySelector('h3').textContent;
@@ -313,7 +314,7 @@ favoriteButtons.forEach(button => {
         });
     });
 
-function updateFavoritesList() {
+    function updateFavoritesList() {
         favoritesList.innerHTML = ''; // 清空收藏區域
     
         if (favorites.size === 0) {
@@ -470,7 +471,7 @@ setInterval(() => {
         nftCards.forEach(card => {
             const priceElement = card.querySelector('.nft-price');
             const oldPrice = parseFloat(priceElement.textContent.split('：')[1]);
-            const newPrice = (oldPrice * (1 + (Math.random() - 0.5) * 0.1)).toFixed(2); // 上下浮動 10%
+            const newPrice = (oldPrice * (1 + (Math.random() - 0.5) * 0.05)).toFixed(2); // 上下浮動 5%
     
             // 更新價格並顯示變化樣式
             priceElement.textContent = `價格：${newPrice} MTC`;

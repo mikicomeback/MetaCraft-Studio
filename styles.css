@@ -643,12 +643,33 @@ footer canvas {
     padding: 10px;
     border: 1px solid #ccc;
     border-radius: 8px;
-    background-color: linear-gradient(120deg, #212121, #424242);;
+    background: linear-gradient(120deg, #212121, #424242); /* 修正背景漸層語法 */
 }
 
+/* 滾動條樣式 */
+#transaction-info::-webkit-scrollbar {
+    width: 8px; /* 滾動條寬度 */
+}
+
+#transaction-info::-webkit-scrollbar-track {
+    background: #333; /* 滾動條背景顏色 */
+    border-radius: 10px; /* 滾動條背景圓角 */
+}
+
+#transaction-info::-webkit-scrollbar-thumb {
+    background: #888; /* 滾動條顏色 */
+    border-radius: 10px; /* 滾動條圓角 */
+    border: 2px solid #333; /* 滾動條邊框 */
+}
+
+#transaction-info::-webkit-scrollbar-thumb:hover {
+    background: #555; /* 滾動條懸停顏色 */
+}
+
+/* 交易明細的樣式 */
 .transaction-details {
     padding: 10px;
-    background-color: linear-gradient(120deg, #212121, #424242);;
+    background: linear-gradient(120deg, #212121, #424242); /* 修正背景漸層語法 */
     border: 1px solid #ddd;
     border-radius: 6px;
     margin-bottom: 10px;
