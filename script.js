@@ -14,6 +14,8 @@ document.addEventListener("DOMContentLoaded", function() {
     const favoriteButtons = document.querySelectorAll('.favorite-button');
     const favoritesList = document.getElementById('favorites-list');
     const favorites = new Set(); // 使用 Set 避免重複收藏
+    // Get all artist images
+    const artistImages = document.querySelectorAll('.artist-image');
     const nftInventory = {
         '龍鳳雲韻': 10,
         '數位鳳凰重生': 5,
@@ -26,200 +28,6 @@ document.addEventListener("DOMContentLoaded", function() {
         "混沌之心": 3
     };
 
-    const sortFavoritesButton = document.createElement('button');
-    sortFavoritesButton.textContent = '排序收藏';
-    sortFavoritesButton.addEventListener('click', function () {
-        const sortedFavorites = Array.from(favorites).sort(); // 按名稱排序
-        favorites.clear();
-        sortedFavorites.forEach(fav => favorites.add(fav));
-        updateFavoritesList();
-    });
-    document.getElementById('favorites-section').appendChild(sortFavoritesButton);
-
-    const filterForm = document.createElement('form');
-    filterForm.innerHTML = `
-        <label>價格範圍:
-            <input type="number" id="min-price" placeholder="最低價格">
-            <input type="number" id="max-price" placeholder="最高價格">
-        </label>
-        <button type="button" id="apply-filter">篩選</button>
-    `;
-
-    function displayTransactionInfo(transactionID, nftName, quantity, totalPrice, paymentAddress) {
-        const transactionDetails = document.getElementById('transaction-details');
-        
-        // 清空之前的內容（如果只想顯示最新一筆交易）
-        transactionDetails.innerHTML = '';
-    
-        // 動態插入交易資訊
-        const infoHTML = `
-            <div class="transaction-item">
-                <p><strong>交易ID:</strong> ${transactionID}</p>
-                <p><strong>購買NFT:</strong> ${nftName}</p>
-                <p><strong>數量:</strong> ${quantity}</p>
-                <p><strong>總價:</strong> ${totalPrice} MTC</p>
-                <p><strong>支付地址:</strong> ${paymentAddress}</p>
-            </div>
-            <hr>
-        `;
-        transactionDetails.innerHTML = infoHTML;
-    
-        // 增加一些動態效果（選擇性）
-        transactionDetails.style.transition = 'opacity 0.5s';
-        transactionDetails.style.opacity = 1;
-    }
-
-    // 添加購買成功的通知
-    function showNotification(message) {
-        const notification = document.createElement('div');
-        notification.className = 'notification';
-        notification.textContent = message;
-        document.body.appendChild(notification);
-
-        setTimeout(() => {
-            notification.style.opacity = '0';
-            setTimeout(() => notification.remove(), 500);
-        }, 3000);
-    }
-
-    // 在購買成功後調用
-    showNotification("購買成功！交易已完成。");
-    
-    favoriteButtons.forEach(button => {
-        button.addEventListener('click', function () {
-            const nftCard = this.closest('.nft-card');
-            const nftName = nftCard.querySelector('h3').textContent;
-            const nftImage = nftCard.querySelector('img').src;
-    
-            if (favorites.has(nftName)) {
-                // 已收藏 -> 取消收藏
-                favorites.delete(nftName);
-                this.textContent = '❤️ 收藏';
-                updateFavoritesList();
-            } else {
-                // 未收藏 -> 添加收藏
-                favorites.add(nftName);
-                this.textContent = '💔 取消收藏';
-    
-                // 更新收藏區
-                const favoriteCard = document.createElement('div');
-                favoriteCard.className = 'favorite-card';
-                favoriteCard.innerHTML = `
-                    <img src="${nftImage}" alt="${nftName}" style="width:100px;height:auto;border-radius:5px;">
-                    <p>${nftName}</p>
-                `;
-                favoritesList.appendChild(favoriteCard);
-            }
-    
-            updateFavoritesList();
-        });
-    });
-
-    function logTransaction(transactionID, nftName, quantity, totalPrice, paymentAddress) {
-        transactionHistory.push({
-            id: transactionID,
-            name: nftName,
-            quantity,
-            price: totalPrice,
-            address: paymentAddress,
-            date: new Date().toLocaleString(),
-        });
-        updateTransactionHistoryUI();
-    }
-    
-    // 更新交易記錄到UI
-    function updateTransactionHistoryUI() {
-        const historyContainer = document.getElementById('transaction-history');
-        historyContainer.innerHTML = ''; // 清空現有內容
-
-        if (transactionHistory.length === 0) {
-            historyContainer.innerHTML = '<p>目前尚無交易記錄。</p>';
-            return;
-        }
-
-        transactionHistory.forEach(transaction => {
-            const historyItem = document.createElement('div');
-            historyItem.className = 'history-item';
-            historyItem.innerHTML = `
-                <p>交易ID: ${transaction.id}</p>
-                <p>名稱: ${transaction.name}</p>
-                <p>數量: ${transaction.quantity}</p>
-                <p>總價: ${transaction.price} MTC</p>
-                <p>支付地址: ${transaction.address}</p>
-                <p>日期: ${transaction.date}</p>
-                <hr>
-            `;
-            historyContainer.appendChild(historyItem);
-        });
-    }
-    // 更新收藏區顯示
-    function updateFavoritesList() {
-        favoritesList.innerHTML = ''; // 清空收藏區域
-    
-        if (favorites.size === 0) {
-            favoritesList.innerHTML = '<p>尚無收藏，快去添加吧！</p>';
-        } else {
-            favorites.forEach(nftName => {
-                let nftCard = null;
-    
-                // 遍歷所有NFT卡片，找到對應名稱的卡片
-                document.querySelectorAll('.nft-card h3').forEach(h3 => {
-                    if (h3.textContent === nftName) {
-                        nftCard = h3.closest('.nft-card');
-                    }
-                });
-    
-                if (nftCard) {
-                    const nftImage = nftCard.querySelector('img').src;
-    
-                    const favoriteCard = document.createElement('div');
-                    favoriteCard.className = 'favorite-card';
-                    favoriteCard.innerHTML = `
-                        <img src="${nftImage}" alt="${nftName}" style="width:200px;height:auto;border-radius:5px;">
-                        <p>${nftName}</p>
-                    `;
-                    favoritesList.appendChild(favoriteCard);
-                }
-            });
-        }
-    }
-
-    
-    function initializePrices() {
-        const nftCards = document.querySelectorAll('.nft-card');
-        nftCards.forEach(card => {
-            const priceElement = card.querySelector('.nft-price');
-            const randomPrice = (Math.random() * 10 + 5).toFixed(2); // 隨機生成 5-15 的價格
-            priceElement.textContent = `價格：${randomPrice} MTC`;
-        });
-    }
-
-    // 呼叫價格初始化
-    initializePrices();
-    
-    // Get all artist images
-    const artistImages = document.querySelectorAll('.artist-image');
-    // 獲取所有的內部跳轉連結
-    const internalLinks = document.querySelectorAll('a[href^="#"]');
-
-    // 為每個內部連結添加點擊事件
-    internalLinks.forEach(link => {
-        link.addEventListener('click', function (event) {
-            event.preventDefault(); // 防止默認的跳轉行為
-
-            // 獲取目標元素的ID
-            const targetId = this.getAttribute('href').slice(1);
-            const targetElement = document.getElementById(targetId);
-
-            if (targetElement) {
-                // 使用 smooth 行為進行滾動
-                targetElement.scrollIntoView({
-                    behavior: 'smooth',
-                    block: 'start' // 滾動到元素頂部
-                });
-            }
-        });
-    });
     // Get modal elements
     const modal = document.getElementById('image-modal');
     const modalImage = document.getElementById('modal-image');
@@ -268,6 +76,7 @@ document.addEventListener("DOMContentLoaded", function() {
         alert("支付地址已複製！");
     });
     document.querySelector('.popup-content').appendChild(copyAddressButton);
+
     // 模擬錢包資料庫 (用戶的地址和餘額)
     const walletDatabase = {
         "0x742d35Cc6634C0532925a3b844Bc454e4438f44e": { balance: 50 },
@@ -286,18 +95,13 @@ document.addEventListener("DOMContentLoaded", function() {
         if (walletConnected) {
             alert("已連接錢包！");
         } else {
-            // 模擬一個隨機錢包地址（用戶連接錢包）
             const walletAddresses = Object.keys(walletDatabase);
             currentWalletAddress = walletAddresses[Math.floor(Math.random() * walletAddresses.length)];
             walletConnected = true;
 
-            // 更新按鈕文字和顯示餘額
             connectWalletButton.textContent = "已連接錢包";
             const balance = walletDatabase[currentWalletAddress].balance;
-
-            // 顯示當前餘額
             walletBalanceSpan.textContent = `餘額：${balance} MTC`;
-
             alert("錢包已成功連接！");
         }
     });
@@ -318,12 +122,10 @@ document.addEventListener("DOMContentLoaded", function() {
             const nftName = nftCard.querySelector('h3').textContent;
             const nftPrice = nftCard.querySelector('p').textContent.split('：')[1]; // 取價格
 
-            // 顯示NFT名稱、價格與庫存
             document.getElementById('nft-name').textContent = nftName;
             document.getElementById('nft-price').textContent = `價格：${nftPrice}`;
             document.getElementById('nft-stock').textContent = `庫存：${nftInventory[nftName]}`;
 
-            // 顯示購買彈窗
             purchasePopup.style.display = 'flex';
             selectedNft = { name: nftName, price: nftPrice };
         });
@@ -335,83 +137,235 @@ document.addEventListener("DOMContentLoaded", function() {
     });
 
     // 確認購買
-    confirmPurchaseButton.addEventListener('click', function () {
-        if (!walletConnected || !currentWalletAddress) {
-            alert("請先連接錢包！");
-            return;
-        }
+confirmPurchaseButton.addEventListener('click', function () {
+    // 如果尚未連接錢包，則自動連接錢包
+    if (!walletConnected || !currentWalletAddress) {
+        const walletAddresses = Object.keys(walletDatabase);
+        currentWalletAddress = walletAddresses[Math.floor(Math.random() * walletAddresses.length)];
+        walletConnected = true;
 
-        // 假設這些數據已經從後端或表單獲取
-        const selectedNftCard = document.querySelector('.nft-card.selected'); // 假設選擇的NFT卡片有.selected類
-        const nftName = selectedNftCard.querySelector('h3').textContent;
-        const quantity = parseInt(quantityInput.value) || 1;
-        const totalPrice = (parseFloat(selectedNftCard.querySelector('.nft-price').textContent.split('：')[1]) * quantity).toFixed(2);
+        connectWalletButton.textContent = "已連接錢包";
+        const balance = walletDatabase[currentWalletAddress].balance;
+        walletBalanceSpan.textContent = `餘額：${balance} MTC`;
 
-        // 驗證支付地址
-        const paymentAddress = document.getElementById('payment-address').value;
-        if (!paymentAddress.startsWith("0x") || paymentAddress.length !== 42) {
-            alert("請輸入有效的支付地址！");
-            return;
-        }
+        // 複製支付地址
+        const paymentAddress = document.getElementById('payment-address');
+        paymentAddress.value = "0x742d35Cc6634C0532925a3b844Bc454e4438f44e"; // 假設支付地址
+        navigator.clipboard.writeText(paymentAddress.value); // 複製支付地址
+        // 可以在頁面顯示提示 (不使用 alert)
+        const copiedMessage = document.createElement('span');
+        copiedMessage.textContent = "支付地址已自動複製！";
+        copiedMessage.style.color = 'green';
+        document.querySelector('.popup-content').appendChild(copiedMessage);
 
-        // 驗證餘額是否足夠
-        if (userBalance < totalPrice) {
-            alert("錢包餘額不足，無法完成購買！");
-            return;
-        }
+        setTimeout(() => copiedMessage.remove(), 2000); // 顯示2秒後移除訊息
+    }
 
-        // 驗證庫存是否足夠
-        if (quantity > nftInventory[selectedNft.name]) {
-            alert("購買數量超過庫存！");
-            return;
-        }
+    const nftName = selectedNft.name;
+    const quantity = parseInt(quantityInput.value) || 1;
+    const totalPrice = (parseFloat(selectedNft.price) * quantity).toFixed(2);
 
-        // 更新錢包餘額和NFT庫存
-        walletDatabase[currentWalletAddress].balance -= totalPrice;
-        nftInventory[selectedNft.name] -= quantity;
+    // 驗證支付地址
+    const paymentAddressValue = document.getElementById('payment-address').value;
+    if (!paymentAddressValue.startsWith("0x") || paymentAddressValue.length !== 42) {
+        const errorMessage = document.createElement('span');
+        errorMessage.textContent = "請輸入有效的支付地址！";
+        errorMessage.style.color = 'red';
+        document.querySelector('.popup-content').appendChild(errorMessage);
 
-        // 更新顯示的餘額
-        walletBalanceSpan.textContent = `餘額：${walletDatabase[currentWalletAddress].balance} MTC`;
+        setTimeout(() => errorMessage.remove(), 2000); // 顯示2秒後移除錯誤訊息
+        return;
+    }
 
-        // 模擬交易ID
-        const transactionID = Math.random().toString(36).substr(2, 9).toUpperCase();
+    // 驗證餘額是否足夠
+    const userBalance = walletDatabase[currentWalletAddress].balance;
+    if (userBalance < totalPrice) {
+        const errorMessage = document.createElement('span');
+        errorMessage.textContent = "錢包餘額不足，無法完成購買！";
+        errorMessage.style.color = 'red';
+        document.querySelector('.popup-content').appendChild(errorMessage);
 
-        // 顯示訂單確認彈窗
-        purchasePopup.style.display = 'none';
-        confirmationPopup.style.display = 'flex';
+        setTimeout(() => errorMessage.remove(), 2000); // 顯示2秒後移除錯誤訊息
+        return;
+    }
 
-        // 打印交易資訊
-        console.log(`交易ID: ${transactionID}`);
-        console.log(`購買NFT: ${selectedNft.name}`);
-        console.log(`數量: ${quantity}`);
-        console.log(`總價: ${totalPrice} MTC`);
-        console.log(`支付地址: ${paymentAddress}`);
+    // 驗證庫存是否足夠
+    if (quantity > nftInventory[nftName]) {
+        const errorMessage = document.createElement('span');
+        errorMessage.textContent = "購買數量超過庫存！";
+        errorMessage.style.color = 'red';
+        document.querySelector('.popup-content').appendChild(errorMessage);
 
-        // 顯示交易資訊到前端
-        displayTransactionInfo(transactionID, nftName, quantity, totalPrice, paymentAddress);
+        setTimeout(() => errorMessage.remove(), 2000); // 顯示2秒後移除錯誤訊息
+        return;
+    }
 
-        // 更新交易記錄
-        logTransaction(transactionID, nftName, quantity, totalPrice, paymentAddress);
-    });
+    // 更新錢包餘額和NFT庫存
+    walletDatabase[currentWalletAddress].balance -= totalPrice;
+    nftInventory[nftName] -= quantity;
+
+    walletBalanceSpan.textContent = `餘額：${walletDatabase[currentWalletAddress].balance} MTC`;
+
+    // 生成訂單編號
+    const transactionID = Math.random().toString(36).substr(2, 9).toUpperCase();
+
+    // 顯示訂單編號在確認彈窗
+    const orderIdElement = document.getElementById('order-id');
+    orderIdElement.textContent = `訂單編號: ${transactionID}`;
+
+    purchasePopup.style.display = 'none';
+    confirmationPopup.style.display = 'flex';
+
+    // 顯示交易資訊
+    displayTransactionInfo(transactionID, nftName, quantity, totalPrice, paymentAddressValue);
+
+    // 更新交易記錄
+    logTransaction(transactionID, nftName, quantity, totalPrice, paymentAddressValue);
+});
 
     // 關閉訂單成功彈窗
     closeConfirmationButton.addEventListener('click', function() {
         confirmationPopup.style.display = 'none';
     });
 
-    // 切換NFT卡片介紹顯示
-    const nftCards = document.querySelectorAll('.nft-card');  // 獲取所有NFT卡片
-    nftCards.forEach(card => {
-        const nftImage = card.querySelector('img');
-        const nftDescription = card.querySelector('.nft-description'); // 假設你的介紹區域是這樣設置的
-        nftImage.addEventListener('mouseenter', function() {
-            nftDescription.style.display = 'block'; // 顯示介紹
+    function displayTransactionInfo(transactionID, nftName, quantity, totalPrice, paymentAddress) {
+        const transactionDetails = document.getElementById('transaction-details');
+        transactionDetails.innerHTML = '';
+        const infoHTML = `
+            <div class="transaction-item">
+                <p><strong>交易ID:</strong> ${transactionID}</p>
+                <p><strong>購買NFT:</strong> ${nftName}</p>
+                <p><strong>數量:</strong> ${quantity}</p>
+                <p><strong>總價:</strong> ${totalPrice} MTC</p>
+                <p><strong>支付地址:</strong> ${paymentAddress}</p>
+            </div>
+            <hr>
+        `;
+        transactionDetails.innerHTML = infoHTML;
+    }
+
+    function logTransaction(transactionID, nftName, quantity, totalPrice, paymentAddress) {
+        transactionHistory.push({
+            id: transactionID,
+            name: nftName,
+            quantity,
+            price: totalPrice,
+            address: paymentAddress,
+            date: new Date().toLocaleString(), // 記錄交易的當前時間
         });
-        nftImage.addEventListener('mouseleave', function() {
-            nftDescription.style.display = 'none'; // 隱藏介紹
+        updateTransactionHistoryUI(); // 更新交易紀錄 UI
+    }
+    
+    function updateTransactionHistoryUI() {
+        const historyContainer = document.getElementById('transaction-details');
+        historyContainer.innerHTML = ''; // 清空交易記錄區域
+    
+        if (transactionHistory.length === 0) {
+            historyContainer.innerHTML = '<p>目前尚無交易記錄。</p>';
+            return;
+        }
+    
+        // 顯示每一筆交易記錄
+        transactionHistory.forEach(transaction => {
+            const historyItem = document.createElement('div');
+            historyItem.className = 'history-item';
+            historyItem.innerHTML = `
+                <p><strong>交易ID:</strong> ${transaction.id}</p>
+                <p><strong>購買NFT:</strong> ${transaction.name}</p>
+                <p><strong>數量:</strong> ${transaction.quantity}</p>
+                <p><strong>總價:</strong> ${transaction.price} MTC</p>
+                <p><strong>支付地址:</strong> ${transaction.address}</p>
+                <p><strong>時間:</strong> ${transaction.date}</p>
+                <hr>
+            `;
+            historyContainer.appendChild(historyItem);
+        });
+    }
+    
+    // 收藏功能
+favoriteButtons.forEach(button => {
+        button.addEventListener('click', function () {
+            const nftCard = this.closest('.nft-card');
+            const nftName = nftCard.querySelector('h3').textContent;
+            const nftImage = nftCard.querySelector('img').src;
+    
+            if (favorites.has(nftName)) {
+                // 已收藏 -> 取消收藏
+                favorites.delete(nftName);
+                this.textContent = '❤️ 收藏';
+                updateFavoritesList();
+            } else {
+                // 未收藏 -> 添加收藏
+                favorites.add(nftName);
+                this.textContent = '💔 取消收藏';
+    
+                // 更新收藏區
+                const favoriteCard = document.createElement('div');
+                favoriteCard.className = 'favorite-card';
+                favoriteCard.innerHTML = `
+                    <img src="${nftImage}" alt="${nftName}" style="width:100px;height:auto;border-radius:5px;">
+                    <p>${nftName}</p>
+                `;
+                favoritesList.appendChild(favoriteCard);
+            }
+    
+            updateFavoritesList();
         });
     });
-    // 引入 Chart.js 初始化圖表
+
+function updateFavoritesList() {
+        favoritesList.innerHTML = ''; // 清空收藏區域
+    
+        if (favorites.size === 0) {
+            favoritesList.innerHTML = '<p>尚無收藏，快去添加吧！</p>';
+        } else {
+            favorites.forEach(nftName => {
+                let nftCard = null;
+    
+                // 遍歷所有NFT卡片，找到對應名稱的卡片
+                document.querySelectorAll('.nft-card h3').forEach(h3 => {
+                    if (h3.textContent === nftName) {
+                        nftCard = h3.closest('.nft-card');
+                    }
+                });
+    
+                if (nftCard) {
+                    const nftImage = nftCard.querySelector('img').src;
+    
+                    const favoriteCard = document.createElement('div');
+                    favoriteCard.className = 'favorite-card';
+                    favoriteCard.innerHTML = `
+                        <img src="${nftImage}" alt="${nftName}" style="width:200px;height:auto;border-radius:5px;">
+                        <p>${nftName}</p>
+                    `;
+                    favoritesList.appendChild(favoriteCard);
+                }
+            });
+        }
+    }
+        // 獲取所有的內部跳轉連結
+    const internalLinks = document.querySelectorAll('a[href^="#"]');
+
+    // 為每個內部連結添加點擊事件
+    internalLinks.forEach(link => {
+        link.addEventListener('click', function (event) {
+            event.preventDefault(); // 防止默認的跳轉行為
+
+            // 獲取目標元素的ID
+            const targetId = this.getAttribute('href').slice(1);
+            const targetElement = document.getElementById(targetId);
+
+            if (targetElement) {
+                // 使用 smooth 行為進行滾動
+                targetElement.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start' // 滾動到元素頂部
+                });
+            }
+        });
+    });
+
+// 引入 Chart.js 初始化圖表
     const ctx = document.getElementById('nftPriceChart').getContext('2d');
 
     // 初始化價格數據
@@ -526,5 +480,4 @@ document.addEventListener("DOMContentLoaded", function() {
             }
         });
     }, 5000); // 每 10 秒更新一次
-    
 });
