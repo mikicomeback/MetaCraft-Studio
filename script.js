@@ -45,22 +45,6 @@ document.addEventListener("DOMContentLoaded", function() {
         <button type="button" id="apply-filter">篩選</button>
     `;
 
-    document.getElementById('filter-section').appendChild(filterForm);
-
-    document.getElementById('apply-filter').addEventListener('click', function () {
-        const minPrice = parseFloat(document.getElementById('min-price').value) || 0;
-        const maxPrice = parseFloat(document.getElementById('max-price').value) || Infinity;
-
-        document.querySelectorAll('.nft-card').forEach(card => {
-            const price = parseFloat(card.querySelector('.nft-price').textContent.split('：')[1]);
-            if (price >= minPrice && price <= maxPrice) {
-                card.style.display = 'block';
-            } else {
-                card.style.display = 'none';
-            }
-        });
-    });
-
     function displayTransactionInfo(transactionID, nftName, quantity, totalPrice, paymentAddress) {
         const transactionDetails = document.getElementById('transaction-details');
         
