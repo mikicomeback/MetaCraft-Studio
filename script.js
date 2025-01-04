@@ -366,102 +366,105 @@ function updateFavoritesList() {
     });
 
 // 引入 Chart.js 初始化圖表
-    const ctx = document.getElementById('nftPriceChart').getContext('2d');
+const ctx = document.getElementById('nftPriceChart').getContext('2d');
 
-    // 初始化價格數據
-    const nftNames = ["NFT1", "NFT2", "NFT3"]; // 模擬三個 NFT
-    const initialDataCount = 10; // 初始時間點數量
-    const priceDatasets = nftNames.map((nft, index) => {
-        return {
-            label: `${nft} 即時價格 (MTC)`,
-            data: Array.from({ length: initialDataCount }, () => (Math.random() * 10 + 5).toFixed(2)),
-            borderColor: `rgba(${75 + index * 50}, ${192 - index * 50}, ${192}, 1)`, // 動態顏色
-            backgroundColor: `rgba(${75 + index * 50}, ${192 - index * 50}, ${192}, 0.2)`,
-            borderWidth: 2,
-            tension: 0.4 // 平滑線條
-        };
-    });
+// 初始化價格數據
+const nftNames = ["NFT1", "NFT2", "NFT3"]; // 模擬三個 NFT
+const initialDataCount = 10; // 初始時間點數量
+const priceDatasets = nftNames.map((nft, index) => {
+    return {
+        label: `${nft} 即時價格 (MTC)`,
+        data: Array.from({ length: initialDataCount }, () => (Math.random() * 10 + 5).toFixed(2)),
+        borderColor: `rgba(${75 + index * 50}, ${192 - index * 50}, ${192}, 1)`, // 動態顏色
+        backgroundColor: `rgba(${75 + index * 50}, ${192 - index * 50}, ${192}, 0.2)`,
+        borderWidth: 2,
+        tension: 0.4 // 平滑線條
+    };
+});
 
-    let labels = Array.from({ length: initialDataCount }, (_, i) => formatTime(i));
+let labels = Array.from({ length: initialDataCount }, (_, i) => formatTime(new Date()));
 
-    // 配置圖表
-    const nftPriceChart = new Chart(ctx, {
-        type: 'line',
-        data: {
-            labels: labels,
-            datasets: priceDatasets
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                tooltip: {
-                    callbacks: {
-                        label: function (context) {
-                            const currentValue = context.raw;
-                            const prevValue = context.dataset.data[context.dataIndex - 1] || currentValue;
-                            const changePercent = (((currentValue - prevValue) / prevValue) * 100).toFixed(2);
-                            return `${context.dataset.label}: ${currentValue} MTC (${changePercent}%${changePercent >= 0 ? '📈' : '📉'})`;
-                        }
+// 配置圖表
+const nftPriceChart = new Chart(ctx, {
+    type: 'line',
+    data: {
+        labels: labels,
+        datasets: priceDatasets
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            tooltip: {
+                callbacks: {
+                    label: function (context) {
+                        const currentValue = context.raw;
+                        const prevValue = context.dataset.data[context.dataIndex - 1] || currentValue;
+                        const changePercent = (((currentValue - prevValue) / prevValue) * 100).toFixed(2);
+                        return `${context.dataset.label}: ${currentValue} MTC (${changePercent}%${changePercent >= 0 ? '📈' : '📉'})`;
                     }
+                }
+            }
+        },
+        scales: {
+            x: {
+                title: {
+                    display: true,
+                    text: '時間',
+                },
+                ticks: {
+                    callback: function (value, index, values) {
+                        // 根據顯示範圍調整標籤顯示
+                        return labels[index];
+                    },
+                    maxRotation: 0,
+                    minRotation: 0
                 }
             },
-            scales: {
-                x: {
-                    title: {
-                        display: true,
-                        text: '時間',
-                    },
-                    ticks: {
-                        callback: function (value, index, values) {
-                            // 根據顯示範圍調整標籤顯示
-                            return labels[index];
-                        },
-                        maxRotation: 0,
-                        minRotation: 0
-                    }
-                },
-                y: {
-                    beginAtZero: false, // 自動調整數據範圍
-                    title: {
-                        display: true,
-                        text: '價格 (MTC)',
-                    }
+            y: {
+                beginAtZero: false, // 自動調整數據範圍
+                title: {
+                    display: true,
+                    text: '價格 (MTC)',
                 }
             }
         }
+    }
+});
+
+// 格式化當前時間為 HH:MM:SS
+function formatTime(date) {
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+    const seconds = String(date.getSeconds()).padStart(2, '0');
+    return `${hours}:${minutes}:${seconds}`;
+}
+
+// 模擬價格更新
+const updateFrequency = 5000; // 更新頻率（毫秒）
+let timeIndex = 0; // 時間索引
+
+setInterval(() => {
+    priceDatasets.forEach(dataset => {
+        const newPrice = (Math.random() * 10 + 5).toFixed(2); // 新價格 5-15
+        dataset.data.push(newPrice); // 添加新價格
+
+        if (dataset.data.length > initialDataCount) {
+            dataset.data.shift(); // 保持數據點不超過 initialDataCount
+        }
     });
 
-    // 格式化時間，將時間轉換為分鐘:秒的形式
-    function formatTime(timeIndex) {
-        const minutes = Math.floor(timeIndex / 60);
-        const seconds = timeIndex % 60;
-        return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+    const currentTime = new Date();
+    labels.push(formatTime(currentTime)); // 使用當前時間更新標籤
+    timeIndex++;
+
+    if (labels.length > initialDataCount) {
+        labels.shift(); // 刪除最早的時間標籤
     }
 
-    // 模擬價格更新
-    const updateFrequency = 5000; // 更新頻率（毫秒）
-    let timeIndex = 0; // 時間索引
+    nftPriceChart.update(); // 更新圖表
+}, updateFrequency); // 每 updateFrequency 毫秒更新一次
 
-    setInterval(() => {
-        priceDatasets.forEach(dataset => {
-            const newPrice = (Math.random() * 10 + 5).toFixed(2); // 新價格 5-15
-            dataset.data.push(newPrice); // 添加新價格
-
-            if (dataset.data.length > initialDataCount) {
-                dataset.data.shift(); // 保持數據點不超過 initialDataCount
-            }
-        });
-
-        labels.push(formatTime(timeIndex));
-        timeIndex++;
-
-        if (labels.length > initialDataCount) {
-            labels.shift(); // 刪除最早的時間標籤
-        }
-
-        nftPriceChart.update(); // 更新圖表
-    }, updateFrequency); // 每 updateFrequency 毫秒更新一次
     setInterval(() => {
         const nftCards = document.querySelectorAll('.nft-card');
         nftCards.forEach(card => {
