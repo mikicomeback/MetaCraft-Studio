@@ -145,7 +145,7 @@ document.addEventListener("DOMContentLoaded", function() {
     
     // 更新交易記錄到UI
     function updateTransactionHistoryUI() {
-        const historyContainer = document.getElementById('transaction-history');
+        const historyContainer = document.getElementById('transaction-details');
         historyContainer.innerHTML = ''; // 清空現有內容
 
         if (transactionHistory.length === 0) {
