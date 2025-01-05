@@ -569,6 +569,10 @@ body {
     max-height: 400px;
 }
 
+#exchange-rate-chart{
+    max-width: auto;
+    max-height: 400px;
+}
 /* Footer */
 .footer {
     background-color: #333;
@@ -678,4 +682,29 @@ footer canvas {
 .transaction-details p {
     margin: 5px 0;
     font-size: 14px;
+}
+#list-nft-section, #sell-nft-section, #marketplace-section {
+    margin: 20px 0;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+}
+
+#list-nft-section input, #sell-nft-section input, #sell-nft-section select {
+    margin: 5px;
+    padding: 8px;
+    width: 200px;
+}
+
+button {
+    padding: 10px 15px;
+    background-color: #007BFF;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #0056b3;
 }

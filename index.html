@@ -35,6 +35,30 @@
     <a href="#marketplace" class="cta-button">探索市集</a>
   </header>
 
+  <!-- 上架NFT功能 -->
+  <div id="list-nft-section">
+    <h3>上架NFT</h3>
+    <input type="text" id="nft-name-input" placeholder="NFT 名稱">
+    <input type="number" id="nft-quantity-input" placeholder="數量">
+    <input type="number" step="0.01" id="nft-price-input" placeholder="價格 (MTC)">
+    <button id="list-nft-button">上架NFT</button>
+  </div>
+
+  <!-- 販售NFT功能 -->
+  <div id="sell-nft-section">
+    <h3>出售NFT</h3>
+    <select id="owned-nfts"></select>
+    <input type="number" id="sell-quantity-input" placeholder="出售數量">
+    <input type="number" step="0.01" id="sell-price-input" placeholder="單價 (MTC)">
+    <button id="sell-nft-button">上架出售</button>
+  </div>
+
+  <!-- 已上架NFT -->
+  <div id="marketplace-section">
+    <h3>NFT 市場</h3>
+    <div id="marketplace"></div>
+  </div>
+
   <section id="favorites-section">
     <h2>我的收藏</h2>
     <div id="favorites-list" class="favorites-list">
@@ -42,6 +66,12 @@
     </div>
   </section>
 
+  <h3 id="exchange-rate">1TWD = 28 MTC</h3> <!-- 顯示匯率 -->
+  <div id="exchange-rate"></div>
+  <h3 id="total-price-mtc">總價（MTC）：0.00 MTC</h3>
+  <h3 id="total-price-twd">總價（TWD）：0.00 新台幣</h3>
+  <canvas id="exchange-rate-chart" width="300" height="200"></canvas>
+  
   <div id="transaction-info" >
     <h2>交易資訊</h2>
     <div id="transaction-details"></div>
