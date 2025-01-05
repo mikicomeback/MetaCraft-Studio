@@ -170,7 +170,7 @@ document.addEventListener("DOMContentLoaded", function() {
             totalPriceTWD = "1.00";
         }
 
-        totalPriceElement.textContent = `總價：${totalPriceTWD} 新台幣`;
+        totalPriceElement.textContent = `總價：${totalPriceMTC} MTC`;
         document.getElementById('total-price-mtc').textContent = `總價（MTC）：${totalPriceMTC} MTC`;
         document.getElementById('total-price-twd').textContent = `總價（TWD）：${totalPriceTWD} 新台幣`;
     });
