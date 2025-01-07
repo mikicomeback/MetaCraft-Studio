@@ -37,13 +37,15 @@
 }
 
 @keyframes price-up {
-    from { transform: scale(1); }
-    to { transform: scale(1.2); }
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); }
 }
 
 @keyframes price-down {
-    from { transform: scale(1); }
-    to { transform: scale(0.8); }
+    0% { transform: scale(1); }
+    50% { transform: scale(0.9); }
+    100% { transform: scale(1); }
 }
 
 /* General styles */
@@ -552,16 +554,32 @@ body {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
+#exchangeRateContainer {
+    font-size: 20px;
+    display: flex;
+    padding: 10px 10px 10px 10px ;
+    justify-content: center; /* 水平正中對齊 */
+    align-items: center; /* 垂直置中 */
+    gap: 20px; /* 設定元素之間的間距 */
+    text-align: center; /* 使文字居中 */
+}
+
+#changePercentageElement, #exchange-rate, #total-price-mtc, #total-price-twd {
+    margin: 0; /* 去除元素的預設間距 */
+}
+
+#exchange-rate {
+    transition: color 0.3s ease; /* 確保顏色過渡平滑 */
+}
+
 .price-up {
     color: #28a745;
-    font-weight: bold;
-    animation: price-up 1.5s;
+    animation: price-up 0.8s ease-in-out;
 }
 
 .price-down {
     color: #dc3545;
-    font-weight: bold;
-    animation: price-down 1.5s;
+    animation: price-down 0.8s ease-in-out;
 }
 
 #nftPriceChart{

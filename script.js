@@ -25,21 +25,22 @@ document.addEventListener("DOMContentLoaded", function() {
     const exchangeRateElement = document.getElementById('exchange-rate');
     const ownedNfts = {}; // 用戶擁有的NFT清單
     const marketplace = []; // 市場上的NFT清單
-    let exchangeRate = (Math.random() * 0.2 + 28).toFixed(2); // 假設1新台幣 = 1 MTC
+    let exchangeRate = 28.00; // 初始匯率
     let lastExchangeRate = exchangeRate;
+    let trendFactor = 0; // 初始趨勢因子
     let walletConnected = false;
     let currentWalletAddress = null;
 
     const nftInventory = {
-        '龍鳳雲韻': 10,
-        '數位鳳凰重生': 5,
-        '未來綠洲': 20,
-        "星空之下": 25,
-        "共生未來": 13,
-        "變幻城市": 17,
-        "幻境城市": 21,
-        "自由之光": 12,
-        "混沌之心": 3
+        '龍鳳雲韻': Math.floor(Math.random() * 50) + 1, // 1到50之間的隨機數
+        '數位鳳凰重生': Math.floor(Math.random() * 50) + 1,
+        '未來綠洲': Math.floor(Math.random() * 50) + 1,
+        "星空之下": Math.floor(Math.random() * 50) + 1,
+        "共生未來": Math.floor(Math.random() * 50) + 1,
+        "變幻城市": Math.floor(Math.random() * 50) + 1,
+        "幻境城市": Math.floor(Math.random() * 50) + 1,
+        "自由之光": Math.floor(Math.random() * 50) + 1,
+        "混沌之心": Math.floor(Math.random() * 50) + 1
     };
 
     // 模擬錢包資料庫 (用戶的地址和餘額)
@@ -49,8 +50,6 @@ document.addEventListener("DOMContentLoaded", function() {
         "0x60fAd71B509dB28Bd4bF8B4b116C5326A8c74f8f": { balance: 100 }
     };
 
-    // 初始化匯率顯示
-    updateExchangeRate();
     // 上架NFT
     document.getElementById('list-nft-button').addEventListener('click', function () {
         const nftName = document.getElementById('nft-name-input').value.trim();
@@ -72,6 +71,7 @@ document.addEventListener("DOMContentLoaded", function() {
         alert(`${nftName} 已成功上架 ${quantity} 個！`);
         updateOwnedNftsDropdown();
     });
+
     // 出售NFT
     document.getElementById('sell-nft-button').addEventListener('click', function () {
         const nftName = document.getElementById('owned-nfts').value;
@@ -95,6 +95,7 @@ document.addEventListener("DOMContentLoaded", function() {
         updateOwnedNftsDropdown();
         updateMarketplace();
     });
+
     // 更新已擁有NFT的下拉選單
     function updateOwnedNftsDropdown() {
         const dropdown = document.getElementById('owned-nfts');
@@ -157,7 +158,6 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     }
 
-
     // 更新總價與數量
     quantityInput.addEventListener('input', function () {
         const quantity = Math.min(parseInt(quantityInput.value) || 1, nftInventory[selectedNft.name]);
@@ -165,27 +165,30 @@ document.addEventListener("DOMContentLoaded", function() {
         const totalPriceMTC = (pricePerItemMTC * quantity).toFixed(2);
         const totalPriceTWD = (totalPriceMTC * exchangeRate).toFixed(2);
 
-        // 確保總價至少大於 1
-        if (parseFloat(totalPriceTWD) < 1) {
-            totalPriceTWD = "1.00";
+        // 確保總價至少大於 0.00
+        if (parseFloat(totalPriceTWD) <= 0) {
+            totalPriceTWD = "0.00";
         }
 
         totalPriceElement.textContent = `總價：${totalPriceMTC} MTC`;
         document.getElementById('total-price-mtc').textContent = `總價（MTC）：${totalPriceMTC} MTC`;
-        document.getElementById('total-price-twd').textContent = `總價（TWD）：${totalPriceTWD} 新台幣`;
+        document.getElementById('total-price-twd').textContent = `總價（TWD）：${totalPriceTWD} TWD`;
     });
 
     // 複製支付地址按鈕
     copyAddressButton.textContent = '複製支付地址';
     copyAddressButton.style.marginTop = '10px';
     copyAddressButton.addEventListener('click', function () {
-        navigator.clipboard.writeText("0x742d35Cc6634C0532925a3b844Bc454e4438f44e");
-        alert("支付地址已複製！");
+        if (walletConnected && currentWalletAddress) {
+            navigator.clipboard.writeText(currentWalletAddress);
+            alert("支付地址已複製！");
+        } else {
+            alert("請先連接錢包！");
+        }
     });
     document.querySelector('.popup-content').appendChild(copyAddressButton);
 
-    // 虛擬連接錢包按鈕的點擊事件
-    connectWalletButton.addEventListener('click', function() {
+    connectWalletButton.addEventListener('click', function () {
         if (walletConnected) {
             alert("已連接錢包！");
         } else {
@@ -196,7 +199,7 @@ document.addEventListener("DOMContentLoaded", function() {
             connectWalletButton.textContent = "已連接錢包";
             const balance = walletDatabase[currentWalletAddress].balance;
             walletBalanceSpan.textContent = `餘額：${balance} MTC`;
-            alert("錢包已成功連接！");
+            alert("錢包已成功連接！支付地址已更新。");
         }
     });
 
@@ -275,7 +278,7 @@ document.addEventListener("DOMContentLoaded", function() {
         document.getElementById('order-id').textContent = `訂單編號: ${transactionID}`;
 
         // 顯示新台幣總價
-        document.getElementById('total-price-twd').textContent = `總價：${totalPriceTWD} 新台幣`;
+        document.getElementById('total-price-twd').textContent = `總價：${totalPriceTWD} TWD`;
 
         purchasePopup.style.display = 'none';
         confirmationPopup.style.display = 'flex';
@@ -402,33 +405,66 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     }
 
-    // 更新匯率
-    function updateExchangeRate() {
-        exchangeRate = (Math.random() * 0.2 + 28).toFixed(2);
-        exchangeRateElement.textContent = `1新台幣 = ${exchangeRate} MTC`;
-        lastExchangeRate = exchangeRate;
-    }
-
     // 更新匯率時顯示變化
     function updateExchangeRateWithChange() {
         const rate = parseFloat(exchangeRate);
         const previousRate = parseFloat(lastExchangeRate);
         const changePercentage = (((rate - previousRate) / previousRate) * 100).toFixed(2);
 
-        exchangeRateElement.textContent = `1 新台幣 = ${rate} MTC (${changePercentage}% ${changePercentage >= 0 ? '↑' : '↓'})`;
-        lastExchangeRate = exchangeRate;
+        // 更新顯示文字，包含變化百分比和圖示
+        exchangeRateElement.textContent = `1 TWD = ${rate} MTC (${changePercentage}% ${changePercentage >= 0 ? '🔼' : '🔽'})`;
+
+        // 移除舊的動畫類別
+        exchangeRateElement.classList.remove('price-up', 'price-down');
+
+        // 添加新的動畫類別
+        if (rate > previousRate) {
+            exchangeRateElement.classList.add('price-up');
+        } else {
+            exchangeRateElement.classList.add('price-down');
+        }
+
+        // 等待動畫完成後移除動畫類別
+        setTimeout(() => {
+            exchangeRateElement.classList.remove('price-up', 'price-down');
+        }, 3500); // 保持 3.5 秒後移除類別
+
+        // 更新上一次的匯率
+        lastExchangeRate = rate;
     }
 
     // 更新匯率並顯示變化
     setInterval(() => {
-        fetchExchangeRate();
-        updateExchangeRateWithChange();
-    }, 5000); // 每 5 秒更新一次
+        fetchExchangeRate(); // 獲取最新匯率
+        updateExchangeRateWithChange(); // 更新匯率顯示
+        updateExchangeRateChart(); // 更新匯率圖表
+    }, 3000); // 每 5 秒更新一次
 
     // 模擬獲取即時匯率
     function fetchExchangeRate() {
-        exchangeRate = (Math.random() * 0.2 + 28).toFixed(2);
-        exchangeRateElement.textContent = `1 新台幣 = ${exchangeRate} MTC`;
+        // 設置波動範圍
+        const fluctuationRange = 0.1; // 每次波動的最大幅度
+        const randomFluctuation = (Math.random() * 2 - 1) * fluctuationRange; // 生成-0.1到0.1之間的隨機數
+
+        // 暴漲或暴跌機率
+        const extremeFluctuationRange = 2.0; // 暴漲或暴跌的最大幅度
+        const extremeFluctuationProbability = 0.01; // 1%的機率發生暴漲或暴跌
+
+        if (Math.random() < extremeFluctuationProbability) {
+            // 暴漲或暴跌
+            if (Math.random() < 0.5) {
+                // 暴漲
+                exchangeRate += extremeFluctuationRange;
+            } else {
+                // 暴跌
+                exchangeRate -= extremeFluctuationRange;
+            }
+        } else {
+            // 正常波動
+            exchangeRate += randomFluctuation;
+        }
+
+        exchangeRate = parseFloat(exchangeRate.toFixed(2));
     }
 
     // 開啟圖片彈窗
@@ -511,7 +547,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 x: {
                     title: {
                         display: true,
-                        text: '時間',
+                        text: '時間 (每5秒更新一次)',
                     },
                     ticks: {
                         callback: function (value, index, values) {
@@ -557,18 +593,21 @@ document.addEventListener("DOMContentLoaded", function() {
         nftCards.forEach(card => {
             const priceElement = card.querySelector('.nft-price');
             const oldPrice = parseFloat(priceElement.textContent.split('：')[1]);
-            const newPrice = (oldPrice * (1 + (Math.random() - 0.5) * 0.05)).toFixed(2);
+            const newPrice = (oldPrice * (1 + (Math.random() - 0.5) * 0.1)).toFixed(2);
 
             priceElement.textContent = `價格：${newPrice} MTC`;
             if (newPrice > oldPrice) {
                 priceElement.classList.add('price-up');
-                setTimeout(() => priceElement.classList.remove('price-up'), 1000);
             } else {
                 priceElement.classList.add('price-down');
-                setTimeout(() => priceElement.classList.remove('price-down'), 1000);
             }
+
+            // 移除舊的動畫類別
+            setTimeout(() => {
+                priceElement.classList.remove('price-up', 'price-down');
+            }, 3500); // 保持 3.5 秒後移除類別
         });
-    }, 5000); // 每 5 秒更新一次
+    }, 3000); // 每 5 秒更新一次
 
     // 初始化匯率圖表
     const ctxRate = document.getElementById('exchange-rate-chart').getContext('2d');
@@ -605,7 +644,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 x: {
                     title: {
                         display: true,
-                        text: '時間'
+                        text: '時間 (每3秒更新一次)'
                     },
                     ticks: {
                         maxRotation: 0,
@@ -636,12 +675,6 @@ document.addEventListener("DOMContentLoaded", function() {
 
         exchangeRateChart.update();
     }
-
-    // 每 5 秒更新一次匯率並更新圖表
-    setInterval(() => {
-        fetchExchangeRate();
-        updateExchangeRateChart();
-    }, 5000);
 
     // 時間格式化
     function formatTime(date) {
