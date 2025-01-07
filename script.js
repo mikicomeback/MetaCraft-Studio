@@ -315,20 +315,38 @@ document.getElementById('list-nft-button').addEventListener('click', function ()
         button.addEventListener('click', function () {
             const nftCard = button.closest('.nft-card');
             const nftName = nftCard.querySelector('h3').textContent;
-            const nftPrice = nftCard.querySelector('p').textContent.split('：')[1]; // 取價格
+            const nftPriceText = nftCard.querySelector('p').textContent;
+            
+            // 正規表達式去除非數字字符，抓取數字部分
+            const nftPrice = parseFloat(nftPriceText.replace(/[^0-9.]/g, '')) || 0;
 
+            // 更新彈窗中的 NFT 資訊
             document.getElementById('nft-name').textContent = nftName;
-            document.getElementById('nft-price').textContent = `價格：${nftPrice}`;
+            document.getElementById('nft-price').textContent = `價格：${nftPriceText}`;
             document.getElementById('nft-stock').textContent = `庫存：${nftInventory[nftName]}`;
             quantityInput.value = 1; // 預設數量為1
 
             // 計算並更新初始總價
-            const pricePerItemMTC = parseFloat(nftPrice) || 0;
-            const initialTotalPriceMTC = (pricePerItemMTC * 1).toFixed(2); // 預設數量為1
-            const initialTotalPriceTWD = (initialTotalPriceMTC * exchangeRate).toFixed(2);
+            function updateTotalPrice() {
+                const quantity = parseInt(quantityInput.value) || 0; // 確保數量為有效數字
+                const totalPriceMTC = (nftPrice * quantity).toFixed(2);
+                const totalPriceTWD = (totalPriceMTC * exchangeRate).toFixed(2);
 
-            document.getElementById('total-price-mtc').textContent = `總價（MTC）：${initialTotalPriceMTC} MTC`;
-            document.getElementById('total-price-twd').textContent = `總價（TWD）：${initialTotalPriceTWD > 0 ? initialTotalPriceTWD : "0.00"} TWD`;
+                // 更新總價顯示
+                const totalPriceElement = document.getElementById('total-price');
+                if (totalPriceElement) {
+                    totalPriceElement.textContent = `總價：${totalPriceMTC} MTC / ${totalPriceTWD > 0 ? totalPriceTWD : "0.00"} TWD`;
+                }
+
+                document.getElementById('total-price-mtc').textContent = `總價（MTC）：${totalPriceMTC} MTC`;
+                document.getElementById('total-price-twd').textContent = `總價（TWD）：${totalPriceTWD > 0 ? totalPriceTWD : "0.00"} TWD`;
+            }
+
+            // 更新初始總價
+            updateTotalPrice();
+
+            // 監聽數量輸入框的變化，更新總價
+            quantityInput.addEventListener('input', updateTotalPrice);
 
             // 顯示彈窗
             purchasePopup.style.display = 'flex';
