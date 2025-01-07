@@ -194,16 +194,21 @@ document.addEventListener("DOMContentLoaded", function() {
 
     // 更新總價與數量
     quantityInput.addEventListener('input', function () {
-        const quantity = Math.min(parseInt(quantityInput.value) || 1, nftInventory[selectedNft.name]);
+        const maxQuantity = nftInventory[selectedNft.name]; // 獲取當前NFT的庫存
+        let quantity = parseInt(quantityInput.value) || 1; // 獲取輸入的數量，默認為1
+    
+        // 如果輸入的數量超過庫存，則將數量設置為最大庫存
+        if (quantity > maxQuantity) {
+            quantity = maxQuantity;
+            quantityInput.value = maxQuantity; // 更新輸入框的值
+        }
+    
+        // 計算總價
         const pricePerItemMTC = parseFloat(selectedNft.price);
         const totalPriceMTC = (pricePerItemMTC * quantity).toFixed(2);
         const totalPriceTWD = (totalPriceMTC * exchangeRate).toFixed(2);
-
-        // 確保總價至少大於 0.00
-        if (parseFloat(totalPriceTWD) <= 0) {
-            totalPriceTWD = "0.00";
-        }
-
+    
+        // 更新總價顯示
         totalPriceElement.textContent = `總價：${totalPriceMTC} MTC`;
         document.getElementById('total-price-mtc').textContent = `總價（MTC）：${totalPriceMTC} MTC`;
         document.getElementById('total-price-twd').textContent = `總價（TWD）：${totalPriceTWD} TWD`;
@@ -475,7 +480,7 @@ document.addEventListener("DOMContentLoaded", function() {
         fetchExchangeRate(); // 獲取最新匯率
         updateExchangeRateWithChange(); // 更新匯率顯示
         updateExchangeRateChart(); // 更新匯率圖表
-    }, 3000); // 每 5 秒更新一次
+    }, 3000); // 每 3 秒更新一次
 
     // 模擬獲取即時匯率
     function fetchExchangeRate() {
@@ -484,7 +489,7 @@ document.addEventListener("DOMContentLoaded", function() {
         const randomFluctuation = (Math.random() * 2 - 1) * fluctuationRange; // 生成-0.1到0.1之間的隨機數
     
         // 暴漲或暴跌的最大幅度
-        const extremeFluctuationRange = 2.0; // 暴漲或暴跌的最大幅度
+        const extremeFluctuationRange = 1.0; // 暴漲或暴跌的最大幅度
         
         // 隨機設置暴漲或暴跌的機率在30%到60%之間
         const extremeFluctuationProbability = Math.random() * 0.3 + 0.3; // 生成介於 0.3 和 0.6 之間的隨機數
