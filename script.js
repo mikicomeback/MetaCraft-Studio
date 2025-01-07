@@ -194,25 +194,22 @@ document.addEventListener("DOMContentLoaded", function() {
 
     // 更新總價與數量
     quantityInput.addEventListener('input', function () {
-        const maxQuantity = nftInventory[selectedNft.name]; // 獲取當前NFT的庫存
-        let quantity = parseInt(quantityInput.value) || 1; // 獲取輸入的數量，默認為1
+        const maxQuantity = nftInventory[selectedNft.name];
+        let quantity = parseInt(quantityInput.value, 10) || 1;
     
-        // 如果輸入的數量超過庫存，則將數量設置為最大庫存
         if (quantity > maxQuantity) {
             quantity = maxQuantity;
-            quantityInput.value = maxQuantity; // 更新輸入框的值
+            quantityInput.value = maxQuantity;
         }
     
-        // 計算總價
-        const pricePerItemMTC = parseFloat(selectedNft.price);
+        const pricePerItemMTC = parseFloat(selectedNft.price) || 0;
         const totalPriceMTC = (pricePerItemMTC * quantity).toFixed(2);
         const totalPriceTWD = (totalPriceMTC * exchangeRate).toFixed(2);
     
-        // 更新總價顯示
-        totalPriceElement.textContent = `總價：${totalPriceMTC} MTC`;
         document.getElementById('total-price-mtc').textContent = `總價（MTC）：${totalPriceMTC} MTC`;
-        document.getElementById('total-price-twd').textContent = `總價（TWD）：${totalPriceTWD} TWD`;
+        document.getElementById('total-price-twd').textContent = `總價（TWD）：${totalPriceTWD > 0 ? totalPriceTWD : "0.00"} TWD`;
     });
+    
 
     // 複製支付地址按鈕
     copyAddressButton.textContent = '複製支付地址';
@@ -244,7 +241,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
     // 打開購買流程彈窗
     buyButtons.forEach(button => {
-        button.addEventListener('click', function() {
+        button.addEventListener('click', function () {
             const nftCard = button.closest('.nft-card');
             const nftName = nftCard.querySelector('h3').textContent;
             const nftPrice = nftCard.querySelector('p').textContent.split('：')[1]; // 取價格
@@ -252,7 +249,17 @@ document.addEventListener("DOMContentLoaded", function() {
             document.getElementById('nft-name').textContent = nftName;
             document.getElementById('nft-price').textContent = `價格：${nftPrice}`;
             document.getElementById('nft-stock').textContent = `庫存：${nftInventory[nftName]}`;
+            quantityInput.value = 1; // 預設數量為1
 
+            // 計算並更新初始總價
+            const pricePerItemMTC = parseFloat(nftPrice) || 0;
+            const initialTotalPriceMTC = (pricePerItemMTC * 1).toFixed(2); // 預設數量為1
+            const initialTotalPriceTWD = (initialTotalPriceMTC * exchangeRate).toFixed(2);
+
+            document.getElementById('total-price-mtc').textContent = `總價（MTC）：${initialTotalPriceMTC} MTC`;
+            document.getElementById('total-price-twd').textContent = `總價（TWD）：${initialTotalPriceTWD > 0 ? initialTotalPriceTWD : "0.00"} TWD`;
+
+            // 顯示彈窗
             purchasePopup.style.display = 'flex';
             selectedNft = { name: nftName, price: nftPrice };
         });
