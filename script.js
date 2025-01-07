@@ -31,6 +31,29 @@ document.addEventListener("DOMContentLoaded", function() {
     let walletConnected = false;
     let currentWalletAddress = null;
 
+    // 創建通知區域
+    const notificationArea = document.createElement('div');
+    notificationArea.id = 'notification-area';
+    notificationArea.style.position = 'fixed';
+    notificationArea.style.top = '10px';
+    notificationArea.style.right = '10px';
+    notificationArea.style.backgroundColor = 'rgba(0, 0, 0, 0.7)';
+    notificationArea.style.color = 'white';
+    notificationArea.style.padding = '10px';
+    notificationArea.style.borderRadius = '5px';
+    notificationArea.style.zIndex = '1000';
+    notificationArea.style.display = 'none';
+    document.body.appendChild(notificationArea);
+
+    // 顯示通知的函數
+    function showNotification(message) {
+        notificationArea.textContent = message;
+        notificationArea.style.display = 'block';
+        setTimeout(() => {
+            notificationArea.style.display = 'none';
+        }, 3000); // 3秒後消失
+    }
+
     const nftInventory = {
         '龍鳳雲韻': Math.floor(Math.random() * 50) + 1, // 1到50之間的隨機數
         '數位鳳凰重生': Math.floor(Math.random() * 50) + 1,
@@ -49,7 +72,15 @@ document.addEventListener("DOMContentLoaded", function() {
         "0x5FbDB2315678afecb367f032d93F642f64180aa3": { balance: 30 },
         "0x60fAd71B509dB28Bd4bF8B4b116C5326A8c74f8f": { balance: 100 }
     };
-
+    
+    document.querySelector('.company-name').addEventListener('click', function(event) {
+        event.preventDefault(); // 防止默認的跳轉行為
+        window.scrollTo({
+            top: 0, // 滾動到頁面的最頂部
+            behavior: 'smooth' // 平滑滾動
+        });
+    });
+    
     // 上架NFT
     document.getElementById('list-nft-button').addEventListener('click', function () {
         const nftName = document.getElementById('nft-name-input').value.trim();
@@ -57,7 +88,7 @@ document.addEventListener("DOMContentLoaded", function() {
         const price = parseFloat(document.getElementById('nft-price-input').value);
 
         if (!nftName || quantity <= 0 || price <= 0) {
-            alert('請填寫正確的NFT名稱、數量和價格！');
+            showNotification('請填寫正確的NFT名稱、數量和價格！');
             return;
         }
 
@@ -68,7 +99,7 @@ document.addEventListener("DOMContentLoaded", function() {
             ownedNfts[nftName].price = price; // 更新價格
         }
 
-        alert(`${nftName} 已成功上架 ${quantity} 個！`);
+        showNotification(`${nftName} 已成功上架 ${quantity} 個！`);
         updateOwnedNftsDropdown();
     });
 
@@ -79,19 +110,19 @@ document.addEventListener("DOMContentLoaded", function() {
         const price = parseFloat(document.getElementById('sell-price-input').value);
 
         if (!nftName || quantity <= 0 || price <= 0) {
-            alert('請選擇NFT並填寫正確的數量和價格！');
+            showNotification('請選擇NFT並填寫正確的數量和價格！');
             return;
         }
 
         if (ownedNfts[nftName].quantity < quantity) {
-            alert('數量不足，無法出售！');
+            showNotification('數量不足，無法出售！');
             return;
         }
 
         ownedNfts[nftName].quantity -= quantity;
         marketplace.push({ name: nftName, quantity, price });
 
-        alert(`${quantity} 個 ${nftName} 已成功上架出售！`);
+        showNotification(`${quantity} 個 ${nftName} 已成功上架出售！`);
         updateOwnedNftsDropdown();
         updateMarketplace();
     });
@@ -137,7 +168,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
                 if (quantityInt > 0 && quantityInt <= nft.quantity) {
                     nft.quantity -= quantityInt;
-                    alert(`購買成功！獲得 ${quantityInt} 個 ${nft.name}`);
+                    showNotification(`購買成功！獲得 ${quantityInt} 個 ${nft.name}`);
 
                     if (!ownedNfts[nft.name]) {
                         ownedNfts[nft.name] = { quantity: quantityInt, price: nft.price };
@@ -151,8 +182,11 @@ document.addEventListener("DOMContentLoaded", function() {
 
                     updateOwnedNftsDropdown();
                     updateMarketplace();
+
+                    // 影響匯率
+                    updateExchangeRateAfterPurchase(quantityInt, parseFloat(nft.price));
                 } else {
-                    alert('輸入的數量無效！');
+                    showNotification('輸入的數量無效！');
                 }
             });
         });
@@ -181,16 +215,16 @@ document.addEventListener("DOMContentLoaded", function() {
     copyAddressButton.addEventListener('click', function () {
         if (walletConnected && currentWalletAddress) {
             navigator.clipboard.writeText(currentWalletAddress);
-            alert("支付地址已複製！");
+            showNotification("支付地址已複製！");
         } else {
-            alert("請先連接錢包！");
+            showNotification("請先連接錢包！");
         }
     });
     document.querySelector('.popup-content').appendChild(copyAddressButton);
 
     connectWalletButton.addEventListener('click', function () {
         if (walletConnected) {
-            alert("已連接錢包！");
+            showNotification("已連接錢包！");
         } else {
             const walletAddresses = Object.keys(walletDatabase);
             currentWalletAddress = walletAddresses[Math.floor(Math.random() * walletAddresses.length)];
@@ -199,7 +233,7 @@ document.addEventListener("DOMContentLoaded", function() {
             connectWalletButton.textContent = "已連接錢包";
             const balance = walletDatabase[currentWalletAddress].balance;
             walletBalanceSpan.textContent = `餘額：${balance} MTC`;
-            alert("錢包已成功連接！支付地址已更新。");
+            showNotification("錢包已成功連接！支付地址已更新。");
         }
     });
 
@@ -227,7 +261,7 @@ document.addEventListener("DOMContentLoaded", function() {
     // 確認購買
     confirmPurchaseButton.addEventListener('click', function () {
         if (!walletConnected || !currentWalletAddress) {
-            alert("正在連接錢包，請稍候...");
+            showNotification("正在連接錢包，請稍候...");
             setTimeout(() => {
                 const walletAddresses = Object.keys(walletDatabase);
                 currentWalletAddress = walletAddresses[Math.floor(Math.random() * walletAddresses.length)];
@@ -235,7 +269,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 connectWalletButton.textContent = "已連接錢包";
                 const balance = walletDatabase[currentWalletAddress].balance;
                 walletBalanceSpan.textContent = `餘額：${balance} MTC`;
-                alert("錢包已成功連接！");
+                showNotification("錢包已成功連接！");
             }, 1500);
             return;
         }
@@ -248,19 +282,19 @@ document.addEventListener("DOMContentLoaded", function() {
         // 驗證支付地址
         const paymentAddressValue = document.getElementById('payment-address').value;
         if (!paymentAddressValue.startsWith("0x") || paymentAddressValue.length !== 42) {
-            alert("請輸入有效的支付地址！");
+            showNotification("請輸入有效的支付地址！");
             return;
         }
 
         // 驗證餘額是否足夠
         if (walletDatabase[currentWalletAddress].balance < totalPriceMTC) {
-            alert("錢包餘額不足，無法完成購買！");
+            showNotification("錢包餘額不足，無法完成購買！");
             return;
         }
 
         // 驗證庫存是否足夠
         if (quantity > nftInventory[nftName]) {
-            alert("購買數量超過庫存！");
+            showNotification("購買數量超過庫存！");
             return;
         }
 
@@ -288,6 +322,9 @@ document.addEventListener("DOMContentLoaded", function() {
 
         // 更新交易記錄
         logTransaction(transactionID, nftName, quantity, totalPriceMTC, paymentAddressValue);
+    
+        // 影響匯率
+        updateExchangeRateAfterPurchase(quantity, parseFloat(selectedNft.price));
     });
 
     // 關閉訂單成功彈窗
@@ -445,11 +482,13 @@ document.addEventListener("DOMContentLoaded", function() {
         // 設置波動範圍
         const fluctuationRange = 0.1; // 每次波動的最大幅度
         const randomFluctuation = (Math.random() * 2 - 1) * fluctuationRange; // 生成-0.1到0.1之間的隨機數
-
-        // 暴漲或暴跌機率
+    
+        // 暴漲或暴跌的最大幅度
         const extremeFluctuationRange = 2.0; // 暴漲或暴跌的最大幅度
-        const extremeFluctuationProbability = 0.01; // 1%的機率發生暴漲或暴跌
-
+        
+        // 隨機設置暴漲或暴跌的機率在30%到60%之間
+        const extremeFluctuationProbability = Math.random() * 0.3 + 0.3; // 生成介於 0.3 和 0.6 之間的隨機數
+    
         if (Math.random() < extremeFluctuationProbability) {
             // 暴漲或暴跌
             if (Math.random() < 0.5) {
@@ -463,9 +502,9 @@ document.addEventListener("DOMContentLoaded", function() {
             // 正常波動
             exchangeRate += randomFluctuation;
         }
-
+    
         exchangeRate = parseFloat(exchangeRate.toFixed(2));
-    }
+    }    
 
     // 開啟圖片彈窗
     [artistImages, nftImages].forEach(imageGroup => {
@@ -608,6 +647,29 @@ document.addEventListener("DOMContentLoaded", function() {
             }, 3500); // 保持 3.5 秒後移除類別
         });
     }, 3000); // 每 5 秒更新一次
+
+    // 影響匯率的函數
+    function updateExchangeRateAfterPurchase(quantity, price) {
+        // 根據購買的數量和價格來影響匯率
+        const impactFactor = 0.02; // 影響因子，可以根據需要調整
+        const priceImpact = price * impactFactor * quantity;
+
+        // 隨機決定是漲還是跌
+        if (Math.random() < 0.5) {
+            exchangeRate += priceImpact;
+        } else {
+            exchangeRate -= priceImpact;
+        }
+
+        // 確保匯率至少大於 0
+        if (exchangeRate <= 0) {
+            exchangeRate = 0.01; // 設置一個很小的正數以避免負值
+        }
+
+        fetchExchangeRate(); // 更新匯率
+        updateExchangeRateWithChange(); // 更新匯率顯示
+        updateExchangeRateChart(); // 更新匯率圖表
+    }
 
     // 初始化匯率圖表
     const ctxRate = document.getElementById('exchange-rate-chart').getContext('2d');
