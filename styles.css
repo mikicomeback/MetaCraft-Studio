@@ -24,6 +24,19 @@
     }
 }
 
+/* 若畫面小於特定寬度，讓欄位顯示為縱向 */
+@media (max-width: 768px) {
+    #list-nft-section, #sell-nft-section {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    #list-nft-section > *:not(button), #sell-nft-section > *:not(button) {
+        margin-right: 0;
+        margin-bottom: 10px;
+    }
+}
+
 /* 開啟彈窗的動畫 */
 @keyframes popupFadeIn {
     0% {
@@ -701,18 +714,126 @@ footer canvas {
     margin: 5px 0;
     font-size: 14px;
 }
-#list-nft-section, #sell-nft-section, #marketplace-section {
+
+/* 整體區塊設置 */
+#list-nft-section, #sell-nft-section {
     margin: 20px 0;
-    padding: 10px;
-    border: 1px solid #ccc;
+    padding: 20px;
+    border: 1px solid #444; /* 暗色邊框 */
     border-radius: 8px;
+    background-color: #2c2c2c; /* 暗色背景 */
+    color: #f0f0f0; /* 字體顏色為淺色 */
 }
 
+/* 標題顯示 */
+#list-nft-section h3, #sell-nft-section h3 {
+    color: #fff;
+}
+
+/* 輸入框設置 */
 #list-nft-section input, #sell-nft-section input, #sell-nft-section select {
     margin: 5px;
     padding: 8px;
     width: 200px;
+    background-color: #444; /* 輸入框背景色 */
+    border: 1px solid #666; /* 輸入框邊框色 */
+    border-radius: 5px;
+    color: #fff; /* 輸入框文字顏色 */
 }
+
+/* 按鈕設置 */
+#list-nft-button, #sell-nft-button {
+    margin-top: 10px;
+    padding: 10px 20px;
+    background-color: #ff5722; /* 按鈕背景色 */
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+#list-nft-button:hover, #sell-nft-button:hover {
+    background-color: #e64a19; /* 按鈕懸浮狀態顏色 */
+}
+
+/* 上架和販售區塊顯示為橫列 */
+#list-nft-section, #sell-nft-section {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+
+/* 每個輸入項目設置為橫排 */
+#list-nft-section label, #sell-nft-section label {
+    width: 100%;  /* 標籤寬度為100% */
+    color: #fff;
+    margin-bottom: 5px;
+}
+
+/* 設定每個項目的容器 */
+#list-nft-section > *:not(button), #sell-nft-section > *:not(button) {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    margin-right: 20px;
+}
+
+/* 增加一點間距，使各區塊不擁擠 */
+#list-nft-section input, #sell-nft-section input {
+    margin-bottom: 15px;
+}
+
+/* 整體區塊設置 */
+#marketplace-section {
+    margin: 20px 0;
+    padding: 20px;
+    border: 1px solid #444; /* 暗色邊框 */
+    border-radius: 8px;
+    background-color: #2c2c2c; /* 暗色背景 */
+    color: #f0f0f0; /* 字體顏色為淺色 */
+}
+
+/* 標題顯示 */
+#marketplace-section h3 {
+    color: #fff;
+}
+
+/* 市場中每個NFT卡片的設置 */
+#marketplace .market-nft-card {
+    background-color: #444; /* 卡片背景色 */
+    padding: 15px;
+    margin: 10px 0;
+    border-radius: 8px;
+    border: 1px solid #666; /* 卡片邊框 */
+    color: #fff;
+    width: 220px;
+    text-align: center;
+    box-sizing: border-box;
+}
+
+#marketplace .market-nft-card img {
+    width: 100%;
+    height: auto;
+    border-radius: 5px;
+    margin-bottom: 10px;
+}
+
+/* 按鈕設置 */
+.market-nft-card .buy-marketplace-nft {
+    margin-top: 10px;
+    padding: 8px 15px;
+    background-color: #ff5722; /* 按鈕背景色 */
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.market-nft-card .buy-marketplace-nft:hover {
+    background-color: #e64a19; /* 按鈕懸浮狀態顏色 */
+}
+
 
 button {
     padding: 10px 15px;

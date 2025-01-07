@@ -81,52 +81,125 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     });
     
-    // 上架NFT
-    document.getElementById('list-nft-button').addEventListener('click', function () {
-        const nftName = document.getElementById('nft-name-input').value.trim();
-        const quantity = parseInt(document.getElementById('nft-quantity-input').value, 10);
-        const price = parseFloat(document.getElementById('nft-price-input').value);
-
-        if (!nftName || quantity <= 0 || price <= 0) {
-            showNotification('請填寫正確的NFT名稱、數量和價格！');
-            return;
-        }
-
-        if (!ownedNfts[nftName]) {
-            ownedNfts[nftName] = { quantity, price };
+    // 這個函數用來將 NFT 添加到用戶的擁有列表中
+    function addOwnedNft(nftName, quantity, price) {
+        if (ownedNfts[nftName]) {
+            ownedNfts[nftName].quantity += quantity;  // 如果已經擁有該NFT，則增加數量
         } else {
-            ownedNfts[nftName].quantity += quantity;
-            ownedNfts[nftName].price = price; // 更新價格
+            ownedNfts[nftName] = { quantity, price };  // 否則創建新的NFT條目
         }
+
+        updateOwnedNftsDropdown();  // 更新下拉選單
+    }
+    
+// 上架NFT功能
+document.getElementById('list-nft-button').addEventListener('click', function () {
+    const uploaderName = document.getElementById('uploader-name').value.trim();
+    const nftImageInput = document.getElementById('nft-image-upload');
+    const nftName = document.getElementById('nft-name-input').value.trim();
+    const quantity = parseInt(document.getElementById('nft-quantity-input').value, 10);
+    const price = parseFloat(document.getElementById('nft-price-input').value);
+
+    // 驗證輸入
+    if (!uploaderName || !nftName || quantity <= 0 || price <= 0 || !nftImageInput.files[0]) {
+        showNotification('請完整填寫所有欄位並上傳圖片！');
+        return;
+    }
+
+    // 動態更新 ownedNfts
+    addOwnedNft(nftName, quantity, price);
+
+    // 顯示NFT並更新市場
+    const reader = new FileReader();
+    reader.onload = function (event) {
+        const nftImageSrc = event.target.result;
+
+        // 添加到市場
+        const marketplaceDiv = document.getElementById('marketplace');
+        const nftElement = document.createElement('div');
+        nftElement.className = 'market-nft-card';
+        nftElement.innerHTML = `
+            <img src="${nftImageSrc}" alt="${nftName}" style="height:auto;border-radius:5px;">
+            <p style="font-weight:bold; font-size:1.2rem"><strong>名稱：</strong>${nftName}</p>
+            <p style="font-weight:bold; font-size:1rem"><strong>上傳者：</strong>${uploaderName}</p>
+            <p><strong>數量：</strong>${quantity}</p>
+            <p><strong>價格：</strong>${price} MTC</p>
+            <button class="buy-marketplace-nft">購買</button>
+        `;
+        marketplaceDiv.appendChild(nftElement);
+
+        // 清空表單
+        document.getElementById('uploader-name').value = '';
+        nftImageInput.value = '';
+        document.getElementById('nft-name-input').value = '';
+        document.getElementById('nft-quantity-input').value = '';
+        document.getElementById('nft-price-input').value = '';
 
         showNotification(`${nftName} 已成功上架 ${quantity} 個！`);
-        updateOwnedNftsDropdown();
-    });
+    };
+    reader.readAsDataURL(nftImageInput.files[0]);
+});
 
-    // 出售NFT
+    // 更新購買按鈕邏輯
+    function updateBuyButtons(nftElement, nftName, initialQuantity, price) {
+        const buyButton = nftElement.querySelector('.buy-marketplace-nft');
+        buyButton.addEventListener('click', function () {
+            const quantity = prompt(`請輸入購買的數量 (1-${initialQuantity})`);
+            const quantityInt = parseInt(quantity, 10);
+
+            if (quantityInt > 0 && quantityInt <= initialQuantity) {
+                initialQuantity -= quantityInt;
+                showNotification(`購買成功！獲得 ${quantityInt} 個 ${nftName}`);
+                nftElement.querySelector('p:nth-of-type(2)').textContent = `數量：${initialQuantity}`;
+
+                if (initialQuantity === 0) {
+                    nftElement.remove(); // 移除售罄的 NFT
+                }
+            } else {
+                showNotification('輸入的數量無效！');
+            }
+        });
+    }
+
+    // 出售NFT功能
     document.getElementById('sell-nft-button').addEventListener('click', function () {
-        const nftName = document.getElementById('owned-nfts').value;
+        const nftName = document.getElementById('owned-nfts').value; // 用戶選擇的 NFT 名稱
         const quantity = parseInt(document.getElementById('sell-quantity-input').value, 10);
         const price = parseFloat(document.getElementById('sell-price-input').value);
 
+        // 驗證用戶輸入
         if (!nftName || quantity <= 0 || price <= 0) {
-            showNotification('請選擇NFT並填寫正確的數量和價格！');
+            showNotification('請選擇 NFT 並填寫正確的數量和價格！');
             return;
         }
 
+        // 確保用戶擁有足夠的數量
         if (ownedNfts[nftName].quantity < quantity) {
             showNotification('數量不足，無法出售！');
             return;
         }
 
+        // 減少擁有的數量
         ownedNfts[nftName].quantity -= quantity;
-        marketplace.push({ name: nftName, quantity, price });
+
+        // 上架NFT到市場
+        const marketplaceDiv = document.getElementById('marketplace');
+        const nftElement = document.createElement('div');
+        nftElement.className = 'market-nft-card';
+        nftElement.innerHTML = `
+            <p><strong>名稱：</strong>${nftName}</p>
+            <p><strong>數量：</strong>${quantity}</p>
+            <p><strong>價格：</strong>${price} MTC</p>
+            <button class="buy-marketplace-nft">購買</button>
+        `;
+        marketplaceDiv.appendChild(nftElement);
 
         showNotification(`${quantity} 個 ${nftName} 已成功上架出售！`);
-        updateOwnedNftsDropdown();
-        updateMarketplace();
-    });
 
+        updateOwnedNftsDropdown(); // 更新已擁有的NFT下拉選單
+        updateMarketplace(); // 更新市場顯示
+    });
+        
     // 更新已擁有NFT的下拉選單
     function updateOwnedNftsDropdown() {
         const dropdown = document.getElementById('owned-nfts');
@@ -146,51 +219,49 @@ document.addEventListener("DOMContentLoaded", function() {
     function updateMarketplace() {
         const marketplaceDiv = document.getElementById('marketplace');
         marketplaceDiv.innerHTML = '';
-
+    
         marketplace.forEach((nft, index) => {
             const nftElement = document.createElement('div');
+            nftElement.className = 'market-nft-card';
             nftElement.innerHTML = `
-                <p><strong>${nft.name}</strong></p>
-                <p>數量：${nft.quantity}</p>
-                <p>價格：${nft.price} MTC</p>
-                <button data-index="${index}" class="buy-marketplace-nft">購買</button>
+                <p><strong>名稱：</strong>${nftName}</p>
+                <p><strong>數量：</strong>${quantity}</p>
+                <p><strong>價格：</strong>${price} MTC</p>
+                <button class="buy-marketplace-nft">購買</button>
             `;
             marketplaceDiv.appendChild(nftElement);
         });
-
+    
         document.querySelectorAll('.buy-marketplace-nft').forEach(button => {
             button.addEventListener('click', function () {
                 const index = this.getAttribute('data-index');
                 const nft = marketplace[index];
-
+    
                 const quantity = prompt(`請輸入購買的數量 (1-${nft.quantity})`);
                 const quantityInt = parseInt(quantity, 10);
-
+    
                 if (quantityInt > 0 && quantityInt <= nft.quantity) {
                     nft.quantity -= quantityInt;
                     showNotification(`購買成功！獲得 ${quantityInt} 個 ${nft.name}`);
-
+    
                     if (!ownedNfts[nft.name]) {
                         ownedNfts[nft.name] = { quantity: quantityInt, price: nft.price };
                     } else {
                         ownedNfts[nft.name].quantity += quantityInt;
                     }
-
+    
                     if (nft.quantity === 0) {
-                        marketplace.splice(index, 1); // 移除已售罄的NFT
+                        marketplace.splice(index, 1); // 移除已售罄的 NFT
                     }
-
+    
                     updateOwnedNftsDropdown();
                     updateMarketplace();
-
-                    // 影響匯率
-                    updateExchangeRateAfterPurchase(quantityInt, parseFloat(nft.price));
                 } else {
                     showNotification('輸入的數量無效！');
                 }
             });
         });
-    }
+    }    
 
     // 更新總價與數量
     quantityInput.addEventListener('input', function () {

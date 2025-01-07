@@ -18,7 +18,6 @@
     </div>
     <ul class="nav-links">
         <li><a href="#marketplace">NFT市集</a></li>
-        
         <li><a href="#artists">藝術家</a></li>
         <li><a href="#about">關於我們</a></li>
         <li>
@@ -38,12 +37,24 @@
   <!-- 上架NFT功能 -->
   <div id="list-nft-section">
     <h3>上架NFT</h3>
+    <label for="uploader-name">上傳者名稱：</label>
+    <input type="text" id="uploader-name" placeholder="上傳者名稱">
+    <br>
+    <label for="nft-image-upload">NFT 圖片：</label>
+    <input type="file" id="nft-image-upload" accept="image/*">
+    <br>
+    <label for="nft-name-input">NFT 名稱：</label>
     <input type="text" id="nft-name-input" placeholder="NFT 名稱">
-    <input type="number" id="nft-quantity-input" placeholder="數量">
+    <br>
+    <label for="nft-quantity-input">數量：</label>
+    <input type="number" id="nft-quantity-input" min="1" max="100" placeholder="數量">
+    <br>
+    <label for="nft-price-input">價格 (MTC)：</label>
     <input type="number" step="0.01" id="nft-price-input" placeholder="價格 (MTC)">
+    <br>
     <button id="list-nft-button">上架NFT</button>
   </div>
-
+  
   <!-- 販售NFT功能 -->
   <div id="sell-nft-section">
     <h3>出售NFT</h3>
